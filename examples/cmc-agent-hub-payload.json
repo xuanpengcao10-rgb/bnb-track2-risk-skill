@@ -18,6 +18,7 @@
     "liquidity_usd": 82000000,
     "volatility_7d_pct": 6.8,
     "funding_rate_pct": 0.012,
+    "data_age_minutes": 6,
     "technical": {
       "rsi_14": 58
     }
@@ -38,6 +39,7 @@
     "current_drawdown_pct": 4.5,
     "min_liquidity_usd": 5000000,
     "max_volatility_pct": 18,
+    "max_data_age_minutes": 15,
     "risk_profile": "balanced"
   }
 }

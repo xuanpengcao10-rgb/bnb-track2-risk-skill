@@ -28,6 +28,8 @@ interface CmcAgentHubPayload {
     volatility7dPct?: number;
     funding_rate_pct?: number;
     fundingRatePct?: number;
+    data_age_minutes?: number;
+    dataAgeMinutes?: number;
     technical?: {
       rsi_14?: number;
       rsi14?: number;
@@ -54,6 +56,8 @@ interface CmcAgentHubPayload {
     minLiquidityUsd?: number;
     max_volatility_pct?: number;
     maxVolatilityPct?: number;
+    max_data_age_minutes?: number;
+    maxDataAgeMinutes?: number;
     risk_profile?: string;
     riskProfile?: string;
   };
@@ -86,6 +90,7 @@ export function normalizeCmcAgentHubPayload(payload: CmcAgentHubPayload): Strate
       volatility7dPct: numberValue(payload.market.volatility7dPct ?? payload.market.volatility_7d_pct, 0),
       fundingRatePct: numberValue(payload.market.fundingRatePct ?? payload.market.funding_rate_pct, 0),
       rsi14: numberValue(payload.market.rsi14 ?? payload.market.technical?.rsi14 ?? payload.market.technical?.rsi_14, 50),
+      dataAgeMinutes: payload.market.dataAgeMinutes ?? payload.market.data_age_minutes,
     },
     narrative: {
       newsScore: scoreValue(payload.narrative.news_score, payload.narrative.newsScore),
@@ -99,6 +104,7 @@ export function normalizeCmcAgentHubPayload(payload: CmcAgentHubPayload): Strate
       currentDrawdownPct: numberValue(risk.currentDrawdownPct ?? risk.current_drawdown_pct, 0),
       minLiquidityUsd: numberValue(risk.minLiquidityUsd ?? risk.min_liquidity_usd, 5_000_000),
       maxVolatilityPct: numberValue(risk.maxVolatilityPct ?? risk.max_volatility_pct, 18),
+      maxDataAgeMinutes: risk.maxDataAgeMinutes ?? risk.max_data_age_minutes,
       riskProfile: riskProfileValue(risk.riskProfile ?? risk.risk_profile),
     },
   };

@@ -55,9 +55,11 @@ export function App() {
   const simulation = useMemo(() => runSimulation(sampleScenarios), []);
   const action = actionCopy[decision.action];
   const json = JSON.stringify(decision.agentOutput, null, 2);
+  const freshnessGate = decision.risk.gates.find((gate) => gate.id === "data-freshness");
 
   return (
     <main className="app-shell">
+      <a className="skip-link" href="#analysis">Skip to analysis</a>
       <section className="hero-grid" aria-labelledby="page-title">
         <div className="hero-copy">
           <div className="eyebrow"><ShieldCheck size={16} weight="fill" /> BNB Hack Track 2 Strategy Skill</div>
@@ -85,10 +87,21 @@ export function App() {
             </div>
           </div>
           <p>{action.detail}</p>
+          <div className="decision-foot">
+            <span>{decision.risk.summary}</span>
+            <span>Data age {freshnessGate?.observed ?? "not supplied"}</span>
+          </div>
         </div>
       </section>
 
-      <section className="workspace-grid">
+      <section className="proof-strip" aria-label="Strategy proof points">
+        <ProofPoint label="Scenarios" value={simulation.summary.totalScenarios.toString()} detail="deterministic judge path" />
+        <ProofPoint label="Risk blocks" value={simulation.summary.riskBlockedCount.toString()} detail="hard gate refusals" />
+        <ProofPoint label="Capital preserved" value={`${simulation.summary.capitalPreservedPct}%`} detail="blocked losing setups" />
+        <ProofPoint label="Custody" value="0" detail="keys or signatures held" />
+      </section>
+
+      <section className="workspace-grid" id="analysis">
         <aside className="scenario-rail" aria-label="Scenario selector">
           <div className="rail-title">
             <Gauge size={18} weight="bold" /> Scenarios
@@ -145,6 +158,7 @@ export function App() {
             <section className="panel thesis-panel">
               <div className="panel-title"><ChartLineUp size={18} weight="bold" /> Trade thesis</div>
               <p className="thesis">{decision.thesis}</p>
+              <ScoreBreakdown scores={decision.agentOutput.scoreBreakdown} />
               <div className="guard-block">
                 <strong>Invalidation</strong>
                 <ul>
@@ -228,6 +242,41 @@ function Metric({ label, value, suffix = "" }: { label: string; value: number; s
     <div className="metric">
       <span>{label}</span>
       <strong>{value}{suffix}</strong>
+    </div>
+  );
+}
+
+function ProofPoint({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <div className="proof-point">
+      <span>{label}</span>
+      <strong>{value}</strong>
+      <small>{detail}</small>
+    </div>
+  );
+}
+
+function ScoreBreakdown({ scores }: { scores: { market: number; narrative: number; signal: number; risk: number } }) {
+  const rows = [
+    { label: "Market", value: scores.market },
+    { label: "Narrative", value: scores.narrative },
+    { label: "Signal", value: scores.signal },
+    { label: "Risk", value: scores.risk },
+  ];
+
+  return (
+    <div className="score-breakdown" aria-label="Score breakdown">
+      {rows.map((row) => (
+        <div className="score-row" key={row.label}>
+          <div>
+            <span>{row.label}</span>
+            <strong>{row.value}</strong>
+          </div>
+          <div className="score-track">
+            <span style={{ "--score": `${row.value}%` } as React.CSSProperties} />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

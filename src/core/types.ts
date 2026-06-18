@@ -16,6 +16,7 @@ export interface MarketSignals {
   volatility7dPct: number;
   fundingRatePct: number;
   rsi14: number;
+  dataAgeMinutes?: number;
 }
 
 export interface NarrativeSignals {
@@ -31,6 +32,7 @@ export interface RiskLimits {
   currentDrawdownPct: number;
   minLiquidityUsd: number;
   maxVolatilityPct: number;
+  maxDataAgeMinutes?: number;
   riskProfile: RiskProfile;
 }
 
@@ -58,6 +60,13 @@ export interface PositionPlan {
   cooldownHours: number;
 }
 
+export interface ScoreBreakdown {
+  market: number;
+  narrative: number;
+  signal: number;
+  risk: number;
+}
+
 export interface AgentReadableOutput {
   version: "1.0";
   token: string;
@@ -65,6 +74,7 @@ export interface AgentReadableOutput {
   confidence: number;
   maxPositionPct: number;
   stopLossPct: number;
+  scoreBreakdown: ScoreBreakdown;
   invalidation: string[];
   evidence: string[];
   riskGates: Array<Pick<RiskGateResult, "id" | "passed" | "severity">>;
@@ -73,6 +83,8 @@ export interface AgentReadableOutput {
 export interface StrategyResult {
   action: StrategyAction;
   confidence: number;
+  marketScore: number;
+  narrativeScore: number;
   signalScore: number;
   riskScore: number;
   position: PositionPlan;

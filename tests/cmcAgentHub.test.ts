@@ -10,8 +10,10 @@ describe("CMC Agent Hub payload adapter", () => {
     expect(input.token.eligible).toBe(true);
     expect(input.market.liquidityUsd).toBe(82_000_000);
     expect(input.market.rsi14).toBe(58);
+    expect(input.market.dataAgeMinutes).toBe(6);
     expect(input.narrative.newsScore).toBeCloseTo(0.72);
     expect(input.risk.riskProfile).toBe("balanced");
+    expect(input.risk.maxDataAgeMinutes).toBe(15);
   });
 
   it("runs the strategy directly from normalized CMC payloads", () => {

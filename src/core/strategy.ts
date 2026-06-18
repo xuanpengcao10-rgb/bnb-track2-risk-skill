@@ -78,6 +78,17 @@ function evaluateRiskGates(input: StrategyInput): RiskGateResult[] {
       rationale: "Capital protection has priority over new entries when the drawdown budget is nearly consumed.",
     },
     {
+      id: "data-freshness",
+      label: "Market data freshness",
+      passed: market.dataAgeMinutes === undefined || market.dataAgeMinutes <= (risk.maxDataAgeMinutes ?? 15),
+      observed: market.dataAgeMinutes === undefined ? "not supplied" : `${market.dataAgeMinutes} min`,
+      limit: `${risk.maxDataAgeMinutes ?? 15} min`,
+      severity: market.dataAgeMinutes === undefined || market.dataAgeMinutes <= (risk.maxDataAgeMinutes ?? 15)
+        ? "info"
+        : "critical",
+      rationale: "Trading agents should not open exposure from stale market data.",
+    },
+    {
       id: "overheated-rsi",
       label: "Overheated momentum filter",
       passed: market.rsi14 < 76,
@@ -121,6 +132,7 @@ function invalidationConditions(input: StrategyInput, gates: RiskGateResult[], a
   if (!gates.find((gate) => gate.id === "liquidity")?.passed) conditions.push("Liquidity falls below the configured execution floor.");
   if (!gates.find((gate) => gate.id === "volatility")?.passed) conditions.push("Seven-day volatility breaches the risk ceiling.");
   if (!gates.find((gate) => gate.id === "drawdown")?.passed) conditions.push("Current drawdown consumes the configured loss budget.");
+  if (!gates.find((gate) => gate.id === "data-freshness")?.passed) conditions.push("Market data age exceeds the configured freshness limit.");
   conditions.push("Narrative score drops below 0.45 or evidence freshness cannot be verified.");
   if (action === "buy") conditions.push("Price closes below the strategy stop level or RSI accelerates above 76.");
   return conditions;
@@ -131,6 +143,7 @@ function executionGuards(input: StrategyInput, action: StrategyAction): string[]
     "Do not execute unless the token appears in the BNB Hack eligible token universe.",
     "Route execution through a user-approved wallet or agent executor; this skill never holds keys.",
     "Recompute signals before every order and cancel if market data is stale.",
+    "Cancel execution if market data age exceeds the returned freshness limit.",
   ];
   if (action !== "buy") guards.push("Return analysis only; no new order should be opened for hold or avoid decisions.");
   if (input.risk.riskProfile !== "aggressive") guards.push("Cap single-position exposure below the returned maxPortfolioPct even when execution liquidity looks deep.");
@@ -163,6 +176,12 @@ export function evaluateStrategy(input: StrategyInput): StrategyResult {
     confidence,
     maxPositionPct: position.maxPortfolioPct,
     stopLossPct: position.stopLossPct,
+    scoreBreakdown: {
+      market: marketScore,
+      narrative: narrativeScore,
+      signal: signalScore,
+      risk: riskScore,
+    },
     invalidation,
     evidence: input.narrative.evidence.slice(0, 6),
     riskGates: gates.map(({ id, passed, severity }) => ({ id, passed, severity })),
@@ -171,6 +190,8 @@ export function evaluateStrategy(input: StrategyInput): StrategyResult {
   return {
     action,
     confidence,
+    marketScore,
+    narrativeScore,
     signalScore,
     riskScore,
     position,

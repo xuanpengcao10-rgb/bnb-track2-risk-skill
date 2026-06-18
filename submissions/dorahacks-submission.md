@@ -16,7 +16,7 @@ A custody-free strategy skill for AI trading agents that turns CMC-style market,
 
 Risk-Gated Narrative Alpha Skill is built for AI trading agents that need more than a bullish or bearish label. The skill evaluates market momentum, volume, liquidity, volatility, funding, RSI, narrative strength, and portfolio drawdown constraints before returning a structured decision.
 
-The core value is capital protection. If a token is outside the eligible universe, liquidity is too thin, volatility is too high, or drawdown budget is nearly consumed, the skill returns `avoid` even when the narrative looks attractive. For valid setups, it returns a max position size, stop loss, take profit guide, invalidation conditions, and execution guards.
+The core value is capital protection. If a token is outside the eligible universe, liquidity is too thin, volatility is too high, market data is stale, or drawdown budget is nearly consumed, the skill returns `avoid` even when the narrative looks attractive. For valid setups, it returns a score breakdown, max position size, stop loss, take profit guide, invalidation conditions, and execution guards.
 
 The demo uses deterministic sample data so judges can run it without CMC, BNB, or Trust Wallet accounts. The repository also includes a live-style CMC Agent Hub payload adapter and a BNB agent tool wrapper, so the same strategy core can be connected to agent infrastructure without changing the scoring logic.
 
@@ -25,7 +25,7 @@ The demo uses deterministic sample data so judges can run it without CMC, BNB, o
 - Technical execution: tested TypeScript strategy engine, CMC Agent Hub adapter, BNB agent tool wrapper, CLI demo, and interactive Vite demo.
 - Originality: focuses on pre-trade risk gates and agent survivability rather than generic price prediction.
 - Real-world relevance: addresses liquidity, drawdown, volatility, crowding, stale data, and custody boundaries.
-- Demo quality: browser dashboard shows scenario selection, gates, sizing, thesis, equity curve, capital-preservation rate, and agent-readable JSON.
+- Demo quality: browser dashboard shows scenario selection, gates, score breakdown, data freshness, sizing, thesis, equity curve, capital-preservation rate, and agent-readable JSON.
 
 ## Repository URL
 

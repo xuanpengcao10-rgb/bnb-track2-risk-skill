@@ -23,6 +23,7 @@ For each token setup, the skill evaluates:
 - Liquidity floor
 - Volatility ceiling
 - Portfolio drawdown budget
+- Market data freshness
 - Overheated momentum filter
 - Market momentum, volume, RSI, and funding conditions
 - News, social, KOL, and catalyst narrative quality
@@ -31,6 +32,7 @@ It returns:
 
 - `buy`, `hold`, or `avoid`
 - Confidence score
+- Market, narrative, signal, and risk score breakdown
 - Max portfolio allocation
 - Stop loss and take profit guide
 - Risk gate results
@@ -63,6 +65,7 @@ Review `docs/judge-notes.md`, `submissions/skill-manifest.json`, and `examples/c
 
 - **BNB rotation with improving market breadth:** passes all gates and allows controlled exposure.
 - **High-social meme spike:** rejects a crowded move because volatility, funding, and RSI indicate late-entry risk.
+- **Stale catalyst feed:** rejects a strong narrative because the CMC-style market snapshot is too old.
 - **Conflicted signal:** keeps the token on watch without opening a fresh position.
 - **Outside eligible universe:** rejects a token even when the narrative looks attractive.
 

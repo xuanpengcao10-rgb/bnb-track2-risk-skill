@@ -30,6 +30,7 @@ interface StrategyInput {
     volatility7dPct: number;
     fundingRatePct: number;
     rsi14: number;
+    dataAgeMinutes?: number;
   };
   narrative: {
     newsScore: number;
@@ -43,6 +44,7 @@ interface StrategyInput {
     currentDrawdownPct: number;
     minLiquidityUsd: number;
     maxVolatilityPct: number;
+    maxDataAgeMinutes?: number;
     riskProfile: "conservative" | "balanced" | "aggressive";
   };
 }
@@ -61,6 +63,7 @@ Hard risk gates:
 - Liquidity must be above the configured floor.
 - Seven-day volatility must stay below the configured ceiling.
 - Current drawdown must stay within the configured drawdown budget.
+- Market data age must stay within the configured freshness window when supplied.
 
 Soft risk gate:
 
@@ -76,6 +79,12 @@ interface AgentReadableOutput {
   confidence: number;
   maxPositionPct: number;
   stopLossPct: number;
+  scoreBreakdown: {
+    market: number;
+    narrative: number;
+    signal: number;
+    risk: number;
+  };
   invalidation: string[];
   evidence: string[];
   riskGates: Array<{
@@ -121,6 +130,7 @@ Many trading demos optimize for picking winners. This skill optimizes for surviv
 
 - It blocks trades outside the allowed universe.
 - It refuses crowded social spikes when volatility is already extreme.
+- It rejects otherwise attractive setups when market data is stale.
 - It returns invalidation rules before execution.
 - It keeps the execution layer separate from the analysis layer.
 

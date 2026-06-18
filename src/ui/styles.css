@@ -1,6 +1,6 @@
 :root {
   color: #17201b;
-  background: #f5f2ea;
+  background: #eef2ef;
   font-family: Satoshi, Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: geometricPrecision;
@@ -16,14 +16,32 @@ body {
   min-width: 320px;
   min-height: 100dvh;
   background:
-    linear-gradient(135deg, rgba(42, 87, 73, 0.12), transparent 34%),
-    linear-gradient(315deg, rgba(198, 163, 83, 0.18), transparent 28%),
-    #f5f2ea;
+    radial-gradient(circle at 14% 10%, rgba(43, 105, 83, 0.14), transparent 28%),
+    radial-gradient(circle at 88% 0%, rgba(203, 107, 78, 0.13), transparent 24%),
+    linear-gradient(180deg, #f6f8f5 0%, #e7ece8 100%);
 }
 
 button,
 a {
   font: inherit;
+}
+
+.skip-link {
+  position: fixed;
+  left: 18px;
+  top: 14px;
+  z-index: 3;
+  transform: translateY(-160%);
+  border-radius: 6px;
+  padding: 9px 12px;
+  color: #f8faf7;
+  background: #18382f;
+  text-decoration: none;
+  transition: transform 180ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 .app-shell {
@@ -48,9 +66,9 @@ a {
   border: 1px solid rgba(42, 87, 73, 0.2);
   border-radius: 8px;
   background:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.38)),
-    radial-gradient(circle at 86% 18%, rgba(42, 87, 73, 0.18), transparent 28%);
-  box-shadow: 0 24px 70px rgba(54, 45, 28, 0.08);
+    linear-gradient(115deg, rgba(255, 255, 255, 0.92), rgba(244, 248, 244, 0.52)),
+    radial-gradient(circle at 86% 18%, rgba(42, 87, 73, 0.16), transparent 30%);
+  box-shadow: 0 24px 70px rgba(29, 56, 47, 0.1);
 }
 
 .eyebrow,
@@ -101,7 +119,7 @@ h1 {
   border-radius: 999px;
   padding: 9px 13px;
   color: #26362d;
-  background: rgba(255, 255, 255, 0.58);
+  background: rgba(255, 255, 255, 0.68);
   font-size: 0.88rem;
 }
 
@@ -110,8 +128,8 @@ h1 {
 .scenario-rail {
   border: 1px solid rgba(42, 87, 73, 0.18);
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.72);
-  box-shadow: 0 22px 58px rgba(54, 45, 28, 0.07);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 22px 58px rgba(29, 56, 47, 0.08);
 }
 
 .decision-panel {
@@ -168,7 +186,7 @@ h1 {
   position: absolute;
   inset: 16px;
   border-radius: 50%;
-  background: #fffdf8;
+  background: #fbfdf9;
 }
 
 .confidence-ring div {
@@ -197,6 +215,53 @@ h1 {
 .decision-panel p {
   color: #4d5b52;
   line-height: 1.55;
+}
+
+.decision-foot {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(42, 87, 73, 0.16);
+}
+
+.decision-foot span {
+  color: #5f6d65;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.78rem;
+}
+
+.proof-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(42, 87, 73, 0.16);
+  border-radius: 8px;
+  background: rgba(42, 87, 73, 0.16);
+  box-shadow: 0 18px 48px rgba(29, 56, 47, 0.08);
+}
+
+.proof-point {
+  display: grid;
+  gap: 8px;
+  min-height: 118px;
+  padding: 18px;
+  background: rgba(250, 252, 249, 0.86);
+}
+
+.proof-point span,
+.proof-point small {
+  color: #66736b;
+  font-size: 0.78rem;
+}
+
+.proof-point strong {
+  color: #17201b;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  line-height: 0.92;
 }
 
 .workspace-grid {
@@ -234,8 +299,16 @@ h1 {
 
 .scenario-button:hover,
 .scenario-button.active {
-  background: #fffdf8;
+  background: #fbfdf9;
   border-color: rgba(42, 87, 73, 0.22);
+}
+
+.scenario-button:focus-visible,
+.section-heading a:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid #cb6b4e;
+  outline-offset: 3px;
 }
 
 .scenario-button:active {
@@ -298,7 +371,7 @@ h1 {
   min-height: 98px;
   padding: 18px;
   border-top: 1px solid rgba(42, 87, 73, 0.24);
-  background: rgba(255, 255, 255, 0.36);
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .metric strong {
@@ -388,6 +461,54 @@ h1 {
   color: #25352b;
 }
 
+.score-breakdown {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #fbfdf9;
+  border: 1px solid rgba(42, 87, 73, 0.14);
+}
+
+.score-row {
+  display: grid;
+  gap: 8px;
+}
+
+.score-row > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.score-row span {
+  color: #5f6d65;
+  font-size: 0.82rem;
+}
+
+.score-row strong {
+  color: #17201b;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 0.92rem;
+}
+
+.score-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(42, 87, 73, 0.12);
+}
+
+.score-track span {
+  display: block;
+  width: var(--score);
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #2a5749, #cb6b4e);
+}
+
 .guard-block {
   margin-top: 22px;
   padding-top: 18px;
@@ -436,7 +557,7 @@ h1 {
   padding: 16px;
   border: 1px solid rgba(42, 87, 73, 0.14);
   border-radius: 8px;
-  background: #fffdf8;
+  background: #fbfdf9;
 }
 
 .equity-head {
@@ -480,7 +601,7 @@ h1 {
 }
 
 .equity-dot {
-  fill: #fffdf8;
+  fill: #fbfdf9;
   stroke: #2a5749;
   stroke-width: 2;
 }
@@ -502,7 +623,7 @@ h1 {
   padding: 7px 9px;
   border: 1px solid rgba(42, 87, 73, 0.16);
   border-radius: 999px;
-  background: rgba(255, 253, 248, 0.78);
+  background: rgba(251, 253, 249, 0.82);
 }
 
 .simulation-note {
@@ -524,6 +645,10 @@ h1 {
   }
 
   .metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .proof-strip {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -550,7 +675,8 @@ h1 {
   }
 
   .metrics-grid,
-  .summary-list {
+  .summary-list,
+  .proof-strip {
     grid-template-columns: 1fr;
   }
 

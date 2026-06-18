@@ -14,13 +14,15 @@ Select the BNB rotation scenario. Explain that the token passes all hard gates, 
 
 Select the high-social meme spike. The narrative is attractive, but volatility, funding, and RSI indicate crowding risk. The skill returns `avoid`, proving that risk gates override hype.
 
+Then select the stale catalyst scenario. The catalyst looks strong, but the CMC-style market snapshot is older than the allowed freshness window, so the skill returns `avoid`.
+
 Then select the ineligible token scenario. Even with positive narrative evidence, the skill blocks it because it is outside the eligible universe.
 
 ## 1:35 - 2:10 Show agent-readable JSON
 
 Point to the simulation summary first. The equity curve shows cumulative return across the deterministic scenarios, while the capital-preserved metric shows avoided setups that later moved against risk-seeking buyers.
 
-Then open the Agent-readable output panel. This is the payload an agent can consume directly: version, token, decision, confidence, max position, stop loss, evidence, invalidation, and risk gates.
+Then open the Agent-readable output panel. This is the payload an agent can consume directly: version, token, decision, confidence, score breakdown, max position, stop loss, evidence, invalidation, and risk gates.
 
 This keeps UI presentation separate from agent execution.
 

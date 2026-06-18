@@ -8,6 +8,12 @@
     "confidence": 83,
     "maxPositionPct": 3.5,
     "stopLossPct": 6.1,
+    "scoreBreakdown": {
+      "market": 84.3,
+      "narrative": 67.8,
+      "signal": 75.7,
+      "risk": 100
+    },
     "invalidation": [
       "Narrative score drops below 0.45 or evidence freshness cannot be verified.",
       "Price closes below the strategy stop level or RSI accelerates above 76."
@@ -22,12 +28,14 @@
       { "id": "liquidity", "passed": true, "severity": "info" },
       { "id": "volatility", "passed": true, "severity": "info" },
       { "id": "drawdown", "passed": true, "severity": "info" },
+      { "id": "data-freshness", "passed": true, "severity": "info" },
       { "id": "overheated-rsi", "passed": true, "severity": "info" }
     ],
     "executionGuards": [
       "Do not execute unless the token appears in the BNB Hack eligible token universe.",
       "Route execution through a user-approved wallet or agent executor; this skill never holds keys.",
       "Recompute signals before every order and cancel if market data is stale.",
+      "Cancel execution if market data age exceeds the returned freshness limit.",
       "Cap single-position exposure below the returned maxPortfolioPct even when execution liquidity looks deep."
     ],
     "takeProfitPct": 12.2,
@@ -36,6 +44,6 @@
   "audit": {
     "sourceAdapters": ["cmc-style-market", "narrative-alpha", "portfolio-risk"],
     "custodyMode": "analysis-only",
-    "riskGateSummary": "5/5 risk gates passed"
+    "riskGateSummary": "6/6 risk gates passed"
   }
 }

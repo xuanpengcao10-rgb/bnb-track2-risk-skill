@@ -25,6 +25,9 @@ The adapter accepts CMC-style fields for:
 - `market.volatility7dPct`
 - `market.fundingRatePct`
 - `market.rsi14`
+- `market.dataAgeMinutes`
+
+Risk config can include `maxDataAgeMinutes`. If live data is older than that limit, the strategy returns `avoid` before any executor can open exposure.
 
 Narrative features can come from CMC Agent Hub, news feeds, social scoring, or an agent-owned retrieval layer. The strategy only requires bounded scores from `0` to `1` plus evidence strings.
 
@@ -52,6 +55,7 @@ This project returns execution guards, not transactions. A wallet-facing executo
 
 - The decision is `buy` before opening any order.
 - Market data freshness is still valid.
+- The output score breakdown is consistent with the executor's own latest market snapshot.
 - The token is still eligible.
 - User approval is present.
 - Max position size is not exceeded.

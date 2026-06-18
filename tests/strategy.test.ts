@@ -17,6 +17,7 @@ const baseInput: StrategyInput = {
     volatility7dPct: 6.8,
     fundingRatePct: 0.012,
     rsi14: 58,
+    dataAgeMinutes: 6,
   },
   narrative: {
     newsScore: 0.72,
@@ -33,6 +34,7 @@ const baseInput: StrategyInput = {
     currentDrawdownPct: 4.5,
     minLiquidityUsd: 5_000_000,
     maxVolatilityPct: 18,
+    maxDataAgeMinutes: 15,
     riskProfile: "balanced",
   },
 };
@@ -47,6 +49,12 @@ describe("evaluateStrategy", () => {
     expect(result.risk.gates.every((gate) => gate.passed)).toBe(true);
     expect(result.executionGuards.length).toBeGreaterThan(0);
     expect(result.agentOutput.version).toBe("1.0");
+    expect(result.agentOutput.scoreBreakdown).toEqual({
+      market: result.marketScore,
+      narrative: result.narrativeScore,
+      signal: result.signalScore,
+      risk: result.riskScore,
+    });
   });
 
   it("returns avoid when the token is outside the eligible token universe", () => {
@@ -98,5 +106,18 @@ describe("evaluateStrategy", () => {
     expect(result.position.maxPortfolioPct).toBeGreaterThan(0);
     expect(result.position.maxPortfolioPct).toBeLessThanOrEqual(4);
     expect(result.agentOutput.decision).toBe("hold");
+  });
+
+  it("blocks stale market data before an agent can open exposure", () => {
+    const result = evaluateStrategy({
+      ...baseInput,
+      market: { ...baseInput.market, dataAgeMinutes: 42 },
+    });
+
+    expect(result.action).toBe("avoid");
+    expect(result.position.maxPortfolioPct).toBe(0);
+    expect(result.risk.gates.some((gate) => gate.id === "data-freshness" && !gate.passed)).toBe(true);
+    expect(result.invalidationConditions).toContain("Market data age exceeds the configured freshness limit.");
+    expect(result.executionGuards).toContain("Cancel execution if market data age exceeds the returned freshness limit.");
   });
 });

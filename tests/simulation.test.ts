@@ -23,6 +23,16 @@ describe("runSimulation", () => {
     expect(blocked?.simulationOutcome.estimatedReturnPct).toBe(0);
   });
 
+  it("shows stale data as a capital-preservation block in the demo set", () => {
+    const result = runSimulation(sampleScenarios);
+    const blocked = result.rows.find((row) => row.id === "stale-catalyst-feed");
+
+    expect(blocked).toBeDefined();
+    expect(blocked?.decision.action).toBe("avoid");
+    expect(blocked?.decision.risk.gates.some((gate) => gate.id === "data-freshness" && !gate.passed)).toBe(true);
+    expect(blocked?.simulationOutcome.label).toBe("capital_preserved");
+  });
+
   it("keeps agent-readable outputs available for downstream trading agents", () => {
     const result = runSimulation(sampleScenarios);
 
