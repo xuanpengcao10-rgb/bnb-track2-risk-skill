@@ -9,6 +9,8 @@
 
 Current repository target: `https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill`
 
+If local Git credentials are missing, use `docs/github-push-guide.md`.
+
 ## Demo deployment
 
 - Enable GitHub Pages with GitHub Actions as the source.
