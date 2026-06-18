@@ -45,6 +45,16 @@ npm run dev
 
 Open the local URL printed by Vite. The demo lets judges switch between deterministic scenarios and inspect the exact JSON an agent would consume.
 
+## Judge quick start
+
+```bash
+npm ci
+npm run verify
+npm run dev
+```
+
+Review `docs/judge-notes.md`, `submissions/skill-manifest.json`, and `examples/cmc-skill-response.json` for the strategy contract and agent response shape.
+
 ## Demo scenarios
 
 - **BNB rotation with improving market breadth:** passes all gates and allows controlled exposure.
@@ -83,6 +93,8 @@ if (result.output.decision === "buy") {
 - `submissions/skill-manifest.json`: CMC Skill-style manifest for quick review.
 - `examples/cmc-skill-response.json`: sample agent-readable response.
 - `docs/integration-guide.md`: CMC, BNB Agent SDK, and Trust Wallet integration notes.
+- `docs/judge-notes.md`: concise review path for judges.
+- `docs/submission-checklist.md`: final push, deploy, and DoraHacks checklist.
 - `submissions/demo-script.md`: 2-3 minute demo video script.
 
 ## Current limitations

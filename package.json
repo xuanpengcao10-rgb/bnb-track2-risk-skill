@@ -2,6 +2,9 @@
   "name": "bnb-track2-risk-skill",
   "version": "1.0.0",
   "description": "Risk-gated narrative alpha strategy skill for BNB Hack Track 2 AI trading agents.",
+  "engines": {
+    "node": ">=20"
+  },
   "main": "dist-node/index.js",
   "exports": {
     ".": "./dist-node/index.js"
