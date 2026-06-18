@@ -2,13 +2,18 @@
   "name": "bnb-track2-risk-skill",
   "version": "1.0.0",
   "description": "Risk-gated narrative alpha strategy skill for BNB Hack Track 2 AI trading agents.",
-  "main": "index.js",
+  "main": "dist-node/index.js",
+  "exports": {
+    ".": "./dist-node/index.js"
+  },
   "directories": {
     "doc": "docs",
     "test": "tests"
   },
   "scripts": {
     "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm run typecheck && npm test && npm run cli && npm run build",
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
@@ -31,7 +36,6 @@
     "@vitejs/plugin-react": "^4.7.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-    "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "vite": "^6.4.3",
     "vitest": "^4.1.9"

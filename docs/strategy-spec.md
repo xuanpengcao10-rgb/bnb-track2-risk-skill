@@ -10,6 +10,8 @@ The skill helps an AI trading agent decide whether a token setup is actionable u
 
 The main output is a stable JSON object that downstream agents can consume without reading UI copy.
 
+The CMC Skill-style adapter lives in `src/integrations/cmcSkill.ts` and exposes both `cmcSkillManifest` and `runCmcSkill(input)`.
+
 ## Input schema
 
 ```ts
@@ -84,6 +86,8 @@ interface AgentReadableOutput {
 }
 ```
 
+The CMC adapter wraps this output with execution guards, take-profit, cooldown, and audit metadata for agent review.
+
 ## Position sizing
 
 Position size is reduced by:
@@ -104,6 +108,8 @@ The demo uses deterministic CMC-style data. A live adapter can map CMC Agent Hub
 ### BNB Agent SDK
 
 The exported `evaluateStrategy(input)` function can be wrapped as a BNB Agent SDK tool. The returned `agentOutput` is intentionally compact and versioned.
+
+For an integration surface closer to a skill registry, use `runCmcSkill(input)` from `src/index.ts`.
 
 ### Trust Wallet Agent Kit
 

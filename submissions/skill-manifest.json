@@ -1,0 +1,35 @@
+{
+  "name": "risk-gated-narrative-alpha",
+  "displayName": "Risk-Gated Narrative Alpha Skill",
+  "version": "1.0.0",
+  "track": "BNB Hack Track 2: Strategy Skills",
+  "description": "Turns CMC-style market, narrative, and portfolio-risk signals into buy, hold, or avoid decisions with hard risk gates.",
+  "inputSchema": {
+    "type": "object",
+    "required": ["token", "market", "narrative", "risk"],
+    "properties": {
+      "token": { "type": "object", "description": "Token identity and eligibility context." },
+      "market": { "type": "object", "description": "CMC-style market metrics." },
+      "narrative": { "type": "object", "description": "News, social, KOL, and catalyst signals." },
+      "risk": { "type": "object", "description": "Portfolio drawdown and execution risk limits." }
+    }
+  },
+  "outputSchema": {
+    "type": "object",
+    "required": ["decision", "confidence", "maxPositionPct", "stopLossPct", "riskGates", "executionGuards"],
+    "properties": {
+      "decision": { "enum": ["buy", "hold", "avoid"] },
+      "confidence": { "type": "number", "minimum": 0, "maximum": 100 },
+      "maxPositionPct": { "type": "number", "minimum": 0 },
+      "stopLossPct": { "type": "number", "minimum": 0 },
+      "riskGates": { "type": "array" },
+      "executionGuards": { "type": "array" }
+    }
+  },
+  "permissions": {
+    "custody": "none",
+    "trading": "analysis-only",
+    "externalApis": ["CoinMarketCap Agent Hub compatible input adapter"]
+  },
+  "integrations": ["CoinMarketCap Agent Hub", "BNB Agent SDK", "Trust Wallet Agent Kit"]
+}

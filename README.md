@@ -38,7 +38,7 @@ It returns:
 
 ```bash
 npm install
-npm test
+npm run verify
 npm run cli
 npm run dev
 ```
@@ -59,6 +59,8 @@ src/core/types.ts        Shared input and output schema
 src/core/strategy.ts     Scoring, gates, position sizing, JSON output
 src/core/simulation.ts   Deterministic scenario runner
 src/data/scenarios.ts    Sample CMC-style market and narrative inputs
+src/integrations/        CMC Skill adapter and review manifest source
+src/index.ts             Public package API for agent wrappers
 src/ui/App.tsx           Interactive demo dashboard
 src/cli.ts               Terminal demo for agent-readable output
 ```
@@ -66,15 +68,22 @@ src/cli.ts               Terminal demo for agent-readable output
 ## Agent integration sketch
 
 ```ts
-import { evaluateStrategy } from "./src/core/strategy";
+import { runCmcSkill } from "bnb-track2-risk-skill";
 
-const result = evaluateStrategy(strategyInput);
+const result = runCmcSkill(strategyInput);
 
-if (result.agentOutput.decision === "buy") {
-  // Pass result.agentOutput to a user-approved executor.
+if (result.output.decision === "buy") {
+  // Pass result.output to a user-approved executor.
   // Recheck stale data and wallet permissions before any order.
 }
 ```
+
+## Submission artifacts
+
+- `submissions/skill-manifest.json`: CMC Skill-style manifest for quick review.
+- `examples/cmc-skill-response.json`: sample agent-readable response.
+- `docs/integration-guide.md`: CMC, BNB Agent SDK, and Trust Wallet integration notes.
+- `submissions/demo-script.md`: 2-3 minute demo video script.
 
 ## Current limitations
 

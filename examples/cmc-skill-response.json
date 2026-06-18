@@ -1,0 +1,41 @@
+{
+  "skill": "risk-gated-narrative-alpha",
+  "version": "1.0.0",
+  "output": {
+    "version": "1.0",
+    "token": "BNB",
+    "decision": "buy",
+    "confidence": 83,
+    "maxPositionPct": 3.5,
+    "stopLossPct": 6.1,
+    "invalidation": [
+      "Narrative score drops below 0.45 or evidence freshness cannot be verified.",
+      "Price closes below the strategy stop level or RSI accelerates above 76."
+    ],
+    "evidence": [
+      "CMC-style market breadth shifted positive across large-cap BNB ecosystem assets.",
+      "Social momentum is rising without the RSI profile of a late chase.",
+      "Catalyst calendar includes agent infrastructure announcements during the build window."
+    ],
+    "riskGates": [
+      { "id": "eligible-token", "passed": true, "severity": "info" },
+      { "id": "liquidity", "passed": true, "severity": "info" },
+      { "id": "volatility", "passed": true, "severity": "info" },
+      { "id": "drawdown", "passed": true, "severity": "info" },
+      { "id": "overheated-rsi", "passed": true, "severity": "info" }
+    ],
+    "executionGuards": [
+      "Do not execute unless the token appears in the BNB Hack eligible token universe.",
+      "Route execution through a user-approved wallet or agent executor; this skill never holds keys.",
+      "Recompute signals before every order and cancel if market data is stale.",
+      "Cap single-position exposure below the returned maxPortfolioPct even when execution liquidity looks deep."
+    ],
+    "takeProfitPct": 12.2,
+    "cooldownHours": 4
+  },
+  "audit": {
+    "sourceAdapters": ["cmc-style-market", "narrative-alpha", "portfolio-risk"],
+    "custodyMode": "analysis-only",
+    "riskGateSummary": "5/5 risk gates passed"
+  }
+}

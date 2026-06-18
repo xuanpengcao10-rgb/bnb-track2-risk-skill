@@ -39,10 +39,18 @@ To be filled after deployment or screen-recorded demo upload.
 
 ```bash
 npm install
-npm test
+npm run verify
 npm run cli
 npm run dev
 ```
+
+## Included review artifacts
+
+- `submissions/skill-manifest.json`
+- `examples/cmc-skill-response.json`
+- `docs/strategy-spec.md`
+- `docs/integration-guide.md`
+- `submissions/demo-script.md`
 
 ## Tags
 
