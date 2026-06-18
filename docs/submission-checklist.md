@@ -16,7 +16,7 @@ If local Git credentials are missing, use `docs/github-push-guide.md`.
 - Enable GitHub Pages with GitHub Actions as the source.
 - Run the `Deploy Demo` workflow.
 - Copy the GitHub Pages URL into DoraHacks as the demo link.
-- Expected GitHub Pages URL: `https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/`
+- Live GitHub Pages URL: `https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/`
 - If Pages is not available, record the local demo at `http://127.0.0.1:5173/` and upload the video.
 
 ## DoraHacks fields

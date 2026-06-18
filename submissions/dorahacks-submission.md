@@ -33,7 +33,7 @@ https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill
 
 ## Demo URL
 
-Expected GitHub Pages URL after deployment: https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/
+https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/
 
 ## Setup commands
 
