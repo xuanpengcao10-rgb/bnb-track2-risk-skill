@@ -29,11 +29,11 @@ The demo uses deterministic sample data so judges can run it without CMC, BNB, o
 
 ## Repository URL
 
-To be filled after GitHub repository is created.
+https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill
 
 ## Demo URL
 
-To be filled after deployment or screen-recorded demo upload.
+Expected GitHub Pages URL after deployment: https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/
 
 ## Setup commands
 

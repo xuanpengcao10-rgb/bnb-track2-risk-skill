@@ -7,11 +7,14 @@
 - Keep the repo name short, for example `bnb-track2-risk-skill`.
 - Confirm GitHub Actions `CI` passes.
 
+Current repository target: `https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill`
+
 ## Demo deployment
 
 - Enable GitHub Pages with GitHub Actions as the source.
 - Run the `Deploy Demo` workflow.
 - Copy the GitHub Pages URL into DoraHacks as the demo link.
+- Expected GitHub Pages URL: `https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/`
 - If Pages is not available, record the local demo at `http://127.0.0.1:5173/` and upload the video.
 
 ## DoraHacks fields
