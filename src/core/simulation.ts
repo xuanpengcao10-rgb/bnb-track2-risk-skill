@@ -22,11 +22,20 @@ export interface SimulationSummary {
   averageConfidence: number;
   riskBlockedCount: number;
   estimatedPortfolioReturnPct: number;
+  capitalPreservedPct: number;
+}
+
+export interface EquityCurvePoint {
+  step: number;
+  label: string;
+  cumulativeReturnPct: number;
+  drawdownPct: number;
 }
 
 export interface SimulationResult {
   rows: SimulationRow[];
   summary: SimulationSummary;
+  equityCurve: EquityCurvePoint[];
 }
 
 const round = (value: number, digits = 1) => Number(value.toFixed(digits));
@@ -100,6 +109,23 @@ export function runSimulation(scenarios: StrategyScenario[]): SimulationResult {
     rows.reduce((sum, row) => sum + row.simulationOutcome.estimatedReturnPct, 0),
     2,
   );
+  const capitalPreservedCount = rows.filter((row) => row.simulationOutcome.label === "capital_preserved").length;
+  const capitalPreservedPct = round((capitalPreservedCount / Math.max(rows.length, 1)) * 100, 1);
+  const equityCurve = rows.reduce<EquityCurvePoint[]>(
+    (curve, row, index) => {
+      const previous = curve[curve.length - 1];
+      const cumulativeReturnPct = round(previous.cumulativeReturnPct + row.simulationOutcome.estimatedReturnPct, 2);
+      const peakReturnPct = Math.max(...curve.map((point) => point.cumulativeReturnPct), cumulativeReturnPct);
+      curve.push({
+        step: index + 1,
+        label: row.input.token.symbol,
+        cumulativeReturnPct,
+        drawdownPct: round(Math.max(0, peakReturnPct - cumulativeReturnPct), 2),
+      });
+      return curve;
+    },
+    [{ step: 0, label: "Start", cumulativeReturnPct: 0, drawdownPct: 0 }],
+  );
 
   return {
     rows,
@@ -109,6 +135,8 @@ export function runSimulation(scenarios: StrategyScenario[]): SimulationResult {
       averageConfidence,
       riskBlockedCount,
       estimatedPortfolioReturnPct,
+      capitalPreservedPct,
     },
+    equityCurve,
   };
 }

@@ -10,7 +10,7 @@ The skill helps an AI trading agent decide whether a token setup is actionable u
 
 The main output is a stable JSON object that downstream agents can consume without reading UI copy.
 
-The CMC Skill-style adapter lives in `src/integrations/cmcSkill.ts` and exposes both `cmcSkillManifest` and `runCmcSkill(input)`.
+The CMC Skill-style adapter lives in `src/integrations/cmcSkill.ts` and exposes both `cmcSkillManifest` and `runCmcSkill(input)`. Live-style payload mapping lives in `src/integrations/cmcAgentHub.ts`, and the BNB agent wrapper lives in `src/integrations/bnbAgentTool.ts`.
 
 ## Input schema
 
@@ -103,13 +103,13 @@ Avoid decisions always return `maxPositionPct: 0`.
 
 ### CoinMarketCap Agent Hub
 
-The demo uses deterministic CMC-style data. A live adapter can map CMC Agent Hub data into `StrategyInput.market` and `StrategyInput.narrative` without changing the strategy function.
+The demo uses deterministic CMC-style data. The included `normalizeCmcAgentHubPayload(payload)` adapter maps live-style CMC Agent Hub data into `StrategyInput.market` and `StrategyInput.narrative` without changing the strategy function.
 
 ### BNB Agent SDK
 
 The exported `evaluateStrategy(input)` function can be wrapped as a BNB Agent SDK tool. The returned `agentOutput` is intentionally compact and versioned.
 
-For an integration surface closer to a skill registry, use `runCmcSkill(input)` from `src/index.ts`.
+For an integration surface closer to a skill registry, use `runCmcSkill(input)` from `src/index.ts`. For an agent tool surface, use `bnbAgentStrategyTool.execute(input)`.
 
 ### Trust Wallet Agent Kit
 
@@ -125,3 +125,7 @@ Many trading demos optimize for picking winners. This skill optimizes for surviv
 - It keeps the execution layer separate from the analysis layer.
 
 This makes it useful as a pre-trade guardrail for agents competing under drawdown and trade-count constraints.
+
+## Backtest evidence
+
+`runSimulation(sampleScenarios)` returns deterministic rows, an aggregate summary, and an equity curve. The curve starts at `0%`, adds each scenario outcome, tracks drawdown from peak return, and exposes `capitalPreservedPct` so judges can see when avoided trades protected capital.

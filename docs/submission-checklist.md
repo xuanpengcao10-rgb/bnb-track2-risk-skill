@@ -36,4 +36,13 @@ npm run verify
 npm run dev
 ```
 
-Open the demo, switch all four scenarios, and confirm the Agent-readable output panel updates.
+Open the demo, switch all four scenarios, and confirm the Agent-readable output panel, equity curve, and simulation summary update.
+
+## Demo video recording
+
+- Show the GitHub Pages demo URL.
+- Select the BNB scenario and explain the controlled `buy`.
+- Select the meme spike and ineligible token scenarios to show hard risk blocks.
+- Show the backtest equity curve and capital-preserved metric.
+- Show the Agent-readable output panel.
+- Mention `examples/cmc-agent-hub-payload.json` and `bnbAgentStrategyTool` as the live adapter and agent wrapper.

@@ -18,14 +18,14 @@ Risk-Gated Narrative Alpha Skill is built for AI trading agents that need more t
 
 The core value is capital protection. If a token is outside the eligible universe, liquidity is too thin, volatility is too high, or drawdown budget is nearly consumed, the skill returns `avoid` even when the narrative looks attractive. For valid setups, it returns a max position size, stop loss, take profit guide, invalidation conditions, and execution guards.
 
-The demo uses deterministic sample data so judges can run it without CMC, BNB, or Trust Wallet accounts. The schema is designed so a live CMC Agent Hub adapter can replace the sample data later, and the output can be wrapped by BNB Agent SDK or used by a Trust Wallet-compatible execution layer.
+The demo uses deterministic sample data so judges can run it without CMC, BNB, or Trust Wallet accounts. The repository also includes a live-style CMC Agent Hub payload adapter and a BNB agent tool wrapper, so the same strategy core can be connected to agent infrastructure without changing the scoring logic.
 
 ## Prize relevance
 
-- Technical execution: tested TypeScript strategy engine, CLI demo, and interactive Vite demo.
+- Technical execution: tested TypeScript strategy engine, CMC Agent Hub adapter, BNB agent tool wrapper, CLI demo, and interactive Vite demo.
 - Originality: focuses on pre-trade risk gates and agent survivability rather than generic price prediction.
 - Real-world relevance: addresses liquidity, drawdown, volatility, crowding, stale data, and custody boundaries.
-- Demo quality: browser dashboard shows scenario selection, gates, sizing, thesis, simulation summary, and agent-readable JSON.
+- Demo quality: browser dashboard shows scenario selection, gates, sizing, thesis, equity curve, capital-preservation rate, and agent-readable JSON.
 
 ## Repository URL
 
@@ -48,6 +48,8 @@ npm run dev
 
 - `submissions/skill-manifest.json`
 - `examples/cmc-skill-response.json`
+- `examples/cmc-agent-hub-payload.json`
+- `docs/architecture.md`
 - `docs/strategy-spec.md`
 - `docs/integration-guide.md`
 - `submissions/demo-script.md`

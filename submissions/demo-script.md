@@ -6,7 +6,7 @@ This is Risk-Gated Narrative Alpha Skill, a BNB Hack Track 2 strategy skill for 
 
 ## 0:20 - 0:55 Show the dashboard
 
-Open the browser demo. The left side contains deterministic scenarios. The main panel shows the selected token, the skill decision, confidence, signal score, risk score, position size, and stop loss.
+Open the browser demo. The left side contains deterministic scenarios. The main panel shows the selected token, the skill decision, confidence, signal score, risk score, position size, stop loss, and backtest equity curve.
 
 Select the BNB rotation scenario. Explain that the token passes all hard gates, so the skill allows controlled exposure and returns a `buy` decision.
 
@@ -18,13 +18,15 @@ Then select the ineligible token scenario. Even with positive narrative evidence
 
 ## 1:35 - 2:10 Show agent-readable JSON
 
-Open the Agent-readable output panel. This is the payload an agent can consume directly: version, token, decision, confidence, max position, stop loss, evidence, invalidation, and risk gates.
+Point to the simulation summary first. The equity curve shows cumulative return across the deterministic scenarios, while the capital-preserved metric shows avoided setups that later moved against risk-seeking buyers.
+
+Then open the Agent-readable output panel. This is the payload an agent can consume directly: version, token, decision, confidence, max position, stop loss, evidence, invalidation, and risk gates.
 
 This keeps UI presentation separate from agent execution.
 
 ## 2:10 - 2:40 Integration explanation
 
-The demo data uses CMC-style fields so judges can run it without paid accounts. In a live deployment, a CMC Agent Hub adapter can populate the same schema. The result can be wrapped as a BNB Agent SDK tool and passed to a Trust Wallet-compatible executor, but this skill never holds keys or signs trades.
+The demo data uses CMC-style fields so judges can run it without paid accounts. In a live deployment, `normalizeCmcAgentHubPayload` can populate the same schema from a CMC Agent Hub payload. The result can be called through `bnbAgentStrategyTool` and passed to a Trust Wallet-compatible executor, but this skill never holds keys or signs trades.
 
 ## 2:40 - 3:00 Close
 

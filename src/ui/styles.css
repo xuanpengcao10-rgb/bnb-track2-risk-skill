@@ -431,6 +431,80 @@ h1 {
   padding: 14px 0 12px;
 }
 
+.equity-card {
+  margin-bottom: 18px;
+  padding: 16px;
+  border: 1px solid rgba(42, 87, 73, 0.14);
+  border-radius: 8px;
+  background: #fffdf8;
+}
+
+.equity-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.equity-head span,
+.adapter-list span {
+  color: #69736d;
+  font-size: 0.78rem;
+}
+
+.equity-head strong {
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  color: #2a5749;
+  font-size: 1.1rem;
+}
+
+.equity-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.equity-zero {
+  stroke: rgba(42, 87, 73, 0.2);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+
+.equity-line {
+  stroke: #2a5749;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.equity-dot {
+  fill: #fffdf8;
+  stroke: #2a5749;
+  stroke-width: 2;
+}
+
+.equity-chart text {
+  fill: #69736d;
+  font-family: "SF Mono", "JetBrains Mono", ui-monospace, monospace;
+  font-size: 9px;
+}
+
+.adapter-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.adapter-list span {
+  padding: 7px 9px;
+  border: 1px solid rgba(42, 87, 73, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.78);
+}
+
 .simulation-note {
   margin-top: 20px;
   padding-top: 16px;

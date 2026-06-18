@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react";
 import { evaluateStrategy } from "../core/strategy.js";
 import { runSimulation } from "../core/simulation.js";
+import type { EquityCurvePoint } from "../core/simulation.js";
 import type { RiskGateResult, StrategyAction } from "../core/types.js";
 import { sampleScenarios } from "../data/scenarios.js";
 
@@ -161,11 +162,18 @@ export function App() {
 
             <section className="panel summary-panel">
               <div className="panel-title"><ShieldCheck size={18} weight="bold" /> Simulation summary</div>
+              <EquityCurveChart curve={simulation.equityCurve} />
               <div className="summary-list">
                 <Metric label="Scenarios" value={simulation.summary.totalScenarios} />
                 <Metric label="Risk blocks" value={simulation.summary.riskBlockedCount} />
                 <Metric label="Average confidence" value={simulation.summary.averageConfidence} suffix="%" />
                 <Metric label="Estimated portfolio return" value={simulation.summary.estimatedPortfolioReturnPct} suffix="%" />
+                <Metric label="Capital preserved" value={simulation.summary.capitalPreservedPct} suffix="%" />
+              </div>
+              <div className="adapter-list" aria-label="Live integration adapters">
+                <span>CMC Agent Hub payload adapter</span>
+                <span>BNB agent tool wrapper</span>
+                <span>Custody-free wallet guardrails</span>
               </div>
               <p className="simulation-note">
                 Sample data is deterministic for judging. Live deployments can replace the scenario adapter with
@@ -176,6 +184,42 @@ export function App() {
         </section>
       </section>
     </main>
+  );
+}
+
+function EquityCurveChart({ curve }: { curve: EquityCurvePoint[] }) {
+  const width = 360;
+  const height = 150;
+  const padding = 20;
+  const returns = curve.map((point) => point.cumulativeReturnPct);
+  const minReturn = Math.min(0, ...returns);
+  const maxReturn = Math.max(0, ...returns);
+  const span = Math.max(maxReturn - minReturn, 1);
+  const points = curve.map((point, index) => {
+    const x = padding + (index / Math.max(curve.length - 1, 1)) * (width - padding * 2);
+    const y = height - padding - ((point.cumulativeReturnPct - minReturn) / span) * (height - padding * 2);
+    return { ...point, x, y };
+  });
+  const line = points.map((point) => `${point.x},${point.y}`).join(" ");
+  const zeroY = height - padding - ((0 - minReturn) / span) * (height - padding * 2);
+
+  return (
+    <div className="equity-card">
+      <div className="equity-head">
+        <span>Backtest equity curve</span>
+        <strong>{curve.at(-1)?.cumulativeReturnPct ?? 0}%</strong>
+      </div>
+      <svg className="equity-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Deterministic backtest equity curve">
+        <line className="equity-zero" x1={padding} x2={width - padding} y1={zeroY} y2={zeroY} />
+        <polyline className="equity-line" points={line} fill="none" />
+        {points.map((point) => (
+          <g key={`${point.step}-${point.label}`}>
+            <circle className="equity-dot" cx={point.x} cy={point.y} r="4" />
+            <text x={point.x} y={height - 5} textAnchor="middle">{point.label}</text>
+          </g>
+        ))}
+      </svg>
+    </div>
   );
 }
 

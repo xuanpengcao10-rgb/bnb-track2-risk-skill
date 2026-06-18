@@ -2,6 +2,8 @@
 
 BNB Hack Track 2 submission: a strategy skill for AI trading agents that turns market, narrative, and portfolio-risk signals into a structured buy, hold, or avoid decision.
 
+![Demo dashboard](docs/assets/demo-dashboard.jpg)
+
 The skill is built around one practical idea: a trading agent should know when not to trade. Instead of returning a simple bullish or bearish label, it adds hard risk gates, position sizing, invalidation rules, and execution guards that downstream agents can read directly.
 
 ## Why this fits Track 2
@@ -9,7 +11,8 @@ The skill is built around one practical idea: a trading agent should know when n
 - **Strategy Skill:** produces a reusable decision module that an AI trading agent can call before opening a position.
 - **Real-world relevance:** focuses on drawdown control, liquidity, volatility, crowding, stale data, and custody boundaries.
 - **CMC compatibility:** accepts CMC-style market and narrative inputs. The demo uses deterministic sample data so judges can run it without paid API keys.
-- **BNB Agent SDK compatibility:** exports plain TypeScript functions and stable JSON output that can be wrapped by an agent tool.
+- **Live-style CMC adapter:** includes a CMC Agent Hub payload normalizer in `src/integrations/cmcAgentHub.ts` plus `examples/cmc-agent-hub-payload.json`.
+- **BNB Agent SDK compatibility:** exports plain TypeScript functions, stable JSON output, and `bnbAgentStrategyTool` for agent tool wrapping.
 - **Trust Wallet compatibility:** returns execution guards only. It never stores keys, signs transactions, or executes trades by itself.
 
 ## What the skill does
@@ -33,6 +36,7 @@ It returns:
 - Risk gate results
 - Invalidation conditions
 - Agent-readable JSON payload
+- Deterministic backtest summary with equity curve and capital-preservation rate
 
 ## Run locally
 
@@ -64,12 +68,14 @@ Review `docs/judge-notes.md`, `submissions/skill-manifest.json`, and `examples/c
 
 ## Architecture
 
+See `docs/architecture.md` for the integration diagram.
+
 ```text
 src/core/types.ts        Shared input and output schema
 src/core/strategy.ts     Scoring, gates, position sizing, JSON output
-src/core/simulation.ts   Deterministic scenario runner
+src/core/simulation.ts   Deterministic scenario runner and equity curve
 src/data/scenarios.ts    Sample CMC-style market and narrative inputs
-src/integrations/        CMC Skill adapter and review manifest source
+src/integrations/        CMC Skill, CMC Agent Hub, and BNB agent tool adapters
 src/index.ts             Public package API for agent wrappers
 src/ui/App.tsx           Interactive demo dashboard
 src/cli.ts               Terminal demo for agent-readable output
@@ -78,9 +84,11 @@ src/cli.ts               Terminal demo for agent-readable output
 ## Agent integration sketch
 
 ```ts
-import { runCmcSkill } from "bnb-track2-risk-skill";
+import { bnbAgentStrategyTool, runCmcAgentHubSkill, runCmcSkill } from "bnb-track2-risk-skill";
 
 const result = runCmcSkill(strategyInput);
+const liveStyleResult = runCmcAgentHubSkill(cmcAgentHubPayload);
+const agentToolResult = bnbAgentStrategyTool.execute(strategyInput);
 
 if (result.output.decision === "buy") {
   // Pass result.output to a user-approved executor.
@@ -92,7 +100,9 @@ if (result.output.decision === "buy") {
 
 - `submissions/skill-manifest.json`: CMC Skill-style manifest for quick review.
 - `examples/cmc-skill-response.json`: sample agent-readable response.
+- `examples/cmc-agent-hub-payload.json`: live-style CMC Agent Hub payload fixture.
 - `docs/integration-guide.md`: CMC, BNB Agent SDK, and Trust Wallet integration notes.
+- `docs/architecture.md`: data flow and custody-boundary diagram.
 - `docs/judge-notes.md`: concise review path for judges.
 - `docs/submission-checklist.md`: final push, deploy, and DoraHacks checklist.
 - `submissions/demo-script.md`: 2-3 minute demo video script.
@@ -100,7 +110,7 @@ if (result.output.decision === "buy") {
 ## Current limitations
 
 - Demo data is deterministic and simulated for judging accessibility.
-- Live CMC Agent Hub data can replace `src/data/scenarios.ts` through the same input schema.
+- Live CMC Agent Hub data can replace `src/data/scenarios.ts` through the included payload adapter.
 - The skill does not execute trades and does not provide financial advice.
 - The skill does not custody funds, manage private keys, or sign transactions.
 

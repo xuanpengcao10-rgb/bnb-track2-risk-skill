@@ -32,4 +32,13 @@ describe("runSimulation", () => {
       expect(row.decision.agentOutput.riskGates.length).toBeGreaterThan(0);
     }
   });
+
+  it("returns an equity curve that auditors can inspect", () => {
+    const result = runSimulation(sampleScenarios);
+
+    expect(result.equityCurve).toHaveLength(sampleScenarios.length + 1);
+    expect(result.equityCurve[0]).toEqual({ step: 0, label: "Start", cumulativeReturnPct: 0, drawdownPct: 0 });
+    expect(result.equityCurve.at(-1)?.cumulativeReturnPct).toBe(result.summary.estimatedPortfolioReturnPct);
+    expect(result.summary.capitalPreservedPct).toBeGreaterThan(0);
+  });
 });

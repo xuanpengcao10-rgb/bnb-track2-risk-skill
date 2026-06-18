@@ -6,6 +6,8 @@
 2. Run `npm run dev` and open the browser demo.
 3. Inspect `submissions/skill-manifest.json` for the CMC Skill-style contract.
 4. Inspect `examples/cmc-skill-response.json` for the agent-readable response shape.
+5. Inspect `examples/cmc-agent-hub-payload.json` and `src/integrations/cmcAgentHub.ts` for the live-style CMC adapter.
+6. Inspect `src/integrations/bnbAgentTool.ts` for the BNB agent wrapper.
 
 ## Differentiation
 
@@ -13,6 +15,7 @@ This project is not a generic token predictor. It is a pre-trade risk gate for A
 
 - It can reject attractive narratives when hard risk limits fail.
 - It returns position sizing and invalidation before execution.
+- It exposes a deterministic backtest with an equity curve and capital-preservation rate.
 - It separates analysis from wallet signing and transaction execution.
 - It can be wrapped by an agent without giving the strategy module custody privileges.
 
@@ -21,10 +24,11 @@ This project is not a generic token predictor. It is a pre-trade risk gate for A
 - Select the BNB scenario to show a controlled `buy`.
 - Select the meme spike scenario to show risk gates overriding social hype.
 - Select the ineligible token scenario to show competition/universe enforcement.
+- Point to the equity curve and capital-preserved metric to show auditability.
 - Show the Agent-readable output panel to demonstrate downstream integration.
 
 ## Known constraints
 
 - The sample data is deterministic for reproducible judging.
-- Live CMC Agent Hub data can be mapped into the same `StrategyInput` shape.
+- Live CMC Agent Hub data can be mapped into the same `StrategyInput` shape through the included adapter.
 - The skill does not execute trades and does not provide financial advice.
