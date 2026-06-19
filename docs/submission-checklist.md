@@ -24,6 +24,8 @@ If local Git credentials are missing, use `docs/github-push-guide.md`.
 - Project name: `Risk-Gated Narrative Alpha Skill`
 - Track: `BNB Hack Track 2: Strategy Skills`
 - Short description: use `submissions/dorahacks-submission.md`.
+- Paste-ready final copy: use `submissions/final-submit-copy.md`.
+- Evidence pack for judges: include or reference `submissions/judge-proof-pack.md`.
 - Repository URL: paste the public GitHub repo URL.
 - Demo URL: paste GitHub Pages or video URL.
 - Tags: BNB Chain, AI Agent, Strategy Skill, Risk Management, CoinMarketCap, Trust Wallet, Trading Agent.
@@ -36,7 +38,7 @@ npm run verify
 npm run dev
 ```
 
-Open the demo, switch all five scenarios, and confirm the Agent/tool response panel, score breakdown, scenario replay curve, Judge proof baseline comparison, and simulation summary update.
+Open the demo, switch all five scenarios, and confirm the Agent/tool response panel, score breakdown, scenario replay curve, Judge proof baseline comparison, Integration Proof section, and simulation summary update.
 
 ## Demo video recording
 

@@ -6,6 +6,14 @@ BNB Hack Track 2 submission: a strategy skill for AI trading agents that turns m
 
 The skill is built around one practical idea: a trading agent should know when not to trade. Instead of returning a simple bullish or bearish label, it adds hard risk gates, position sizing, invalidation rules, and execution guards that downstream agents can read directly.
 
+## Judge TL;DR
+
+- **Track fit:** reusable BNB Hack Track 2 Strategy Skill, not a generic token dashboard.
+- **Fast verification:** run `npm run verify` to check type safety, 30 tests, CLI output, and production build.
+- **Integration proof:** CMC Agent Hub payload adapter, CMC Skill-style manifest, BNB agent wrapper, and Trust Wallet custody boundary are all included.
+- **Measured behavior:** deterministic replay shows `+0.36%` return delta and `0.57%` avoided loss versus a naive buy-all baseline.
+- **Review shortcut:** start with `submissions/judge-proof-pack.md`, then open the demo page and inspect the Agent/tool response panel.
+
 ## Submission truth table
 
 | Area | Status in this repo | How judges can verify |
@@ -14,6 +22,7 @@ The skill is built around one practical idea: a trading agent should know when n
 | CMC data path | Live-compatible adapter plus deterministic fixtures and raw-quote safety coverage | `examples/cmc-agent-hub-payload.json`, `examples/cmc-data-quote-payload.json`, `tests/cmcAgentHub.test.ts` |
 | Agent contract | Full CMC Skill response and BNB tool wrapper | `examples/cmc-skill-response.json`, `src/integrations/bnbAgentTool.ts` |
 | Baseline evidence | Backtestable deterministic replay against a naive buy-all baseline | `docs/backtest-baseline-report.md`, `tests/simulation.test.ts` |
+| Integration proof | CMC adapter, skill manifest, BNB wrapper, Trust Wallet boundary, final proof pack | `submissions/judge-proof-pack.md`, browser demo Integration Proof section |
 | Wallet execution | Intentionally out of scope; analysis-only, no custody, no signing | `permissions.trading: "analysis-only"` and returned execution guards |
 | Demo data | Deterministic scenario replay for reproducible judging | Browser demo, `src/data/scenarios.ts`, `src/core/simulation.ts` |
 
@@ -123,6 +132,8 @@ if (result.output.decision === "buy") {
 - `docs/judge-notes.md`: concise review path for judges.
 - `docs/submission-checklist.md`: final push, deploy, and DoraHacks checklist.
 - `submissions/demo-script.md`: 2-3 minute demo video script.
+- `submissions/judge-proof-pack.md`: one-file proof pack for judges.
+- `submissions/final-submit-copy.md`: paste-ready DoraHacks submission copy.
 
 ## Current limitations
 

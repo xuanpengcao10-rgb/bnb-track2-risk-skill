@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import {
   ArrowSquareOut,
   ChartLineUp,
@@ -154,6 +155,43 @@ export function App() {
             <span>Review examples cover CMC response, CMC payload, and baseline evidence</span>
             <span>Execution boundary stays analysis-only: no custody, no signing</span>
           </div>
+        </div>
+      </section>
+
+      <section className="integration-proof-board" aria-label="Integration Proof">
+        <div className="integration-proof-lead">
+          <span>Integration Proof</span>
+          <h2>Live-compatible path without custody risk</h2>
+          <p>
+            The demo stays deterministic for judging, while the adapter layer shows how the same strategy contract
+            can receive CMC-style payloads and return guards to a downstream BNB agent.
+          </p>
+        </div>
+        <div className="integration-proof-grid">
+          <IntegrationProofItem
+            icon={<Code size={19} weight="bold" />}
+            title="CMC Agent Hub payload"
+            detail="examples/cmc-agent-hub-payload.json maps into the same StrategyInput contract used by the demo."
+            proof="src/integrations/cmcAgentHub.ts"
+          />
+          <IntegrationProofItem
+            icon={<ShieldCheck size={19} weight="bold" />}
+            title="Strategy Skill output"
+            detail="The response includes decision, sizing, risk gates, execution guards, audit metadata, and warnings."
+            proof="examples/cmc-skill-response.json"
+          />
+          <IntegrationProofItem
+            icon={<Gauge size={19} weight="bold" />}
+            title="BNB agent wrapper"
+            detail="bnbAgentStrategyTool exposes the strategy as an analysis-only tool an AI agent can call before exposure."
+            proof="src/integrations/bnbAgentTool.ts"
+          />
+          <IntegrationProofItem
+            icon={<LockKey size={19} weight="bold" />}
+            title="Trust Wallet boundary"
+            detail="The skill returns execution guards only; a user-approved wallet executor remains responsible for signing."
+            proof="permissions.trading = analysis-only"
+          />
         </div>
       </section>
 
@@ -323,6 +361,29 @@ function StatusChip({ label, value }: { label: string; value: string }) {
     <div className="status-chip">
       <span>{label}</span>
       <strong>{value}</strong>
+    </div>
+  );
+}
+
+function IntegrationProofItem({
+  icon,
+  title,
+  detail,
+  proof,
+}: {
+  icon: ReactNode;
+  title: string;
+  detail: string;
+  proof: string;
+}) {
+  return (
+    <div className="integration-proof-item">
+      <div className="integration-proof-icon">{icon}</div>
+      <div>
+        <strong>{title}</strong>
+        <p>{detail}</p>
+        <code>{proof}</code>
+      </div>
     </div>
   );
 }

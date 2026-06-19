@@ -119,6 +119,11 @@ export const cmcSkillManifest: CmcSkillManifest = {
       path: "docs/backtest-baseline-report.md",
       purpose: "Compares risk-gated decisions against a naive buy-all baseline.",
     },
+    {
+      name: "Judge proof pack",
+      path: "submissions/judge-proof-pack.md",
+      purpose: "Collects the review path, verification evidence, integration proof, and baseline metrics in one place.",
+    },
   ],
 };
 
