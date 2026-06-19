@@ -1,10 +1,14 @@
 # Demo Video Script
 
-Target length: 2:50 to 3:10.
+Final video length: 3:03.
 
-Record the latest local demo at `http://127.0.0.1:5173/` unless GitHub Pages has already been redeployed with the latest changes.
+Recommended video file:
 
-## 0:00 - 0:20 Opening
+`/Users/caoxuanpeng/Documents/邮件内容用户分层/outputs/demo_voiceover_20260619/integration_rerecord/risk_gated_demo_user_voice_integration.mp4`
+
+Record the latest local demo or use the deployed GitHub Pages demo after redeploy.
+
+## 0:00 - 0:14 Opening
 
 Action: show the first screen.
 
@@ -16,7 +20,7 @@ Hi, this is Risk-Gated Narrative Alpha Skill, a Track 2 Strategy Skill for the B
 The idea is simple: an AI trading agent should not only know when to buy. It should also know when not to trade.
 ```
 
-## 0:20 - 0:45 Explain The Skill
+## 0:14 - 0:38 Explain The Skill
 
 Action: keep the first screen visible. Point to Data mode, Adapter-ready, Custody, and the BNB decision card.
 
@@ -30,7 +34,7 @@ The demo data is deterministic, so judges can reproduce the same result without 
 The adapter path is ready, but this demo is analysis-only. It never stores keys, never signs transactions, and never executes trades.
 ```
 
-## 0:45 - 1:10 Show Judge Proof
+## 0:38 - 1:00 Show Judge Proof
 
 Action: scroll to the Judge proof section.
 
@@ -46,7 +50,23 @@ On this scenario set, the strategy has a positive return delta, lower drawdown, 
 This is the main point of the project: risk gates are measurable, not just UI copy.
 ```
 
-## 1:10 - 1:35 Show BNB Buy
+## 1:00 - 1:25 Show Integration Proof
+
+Action: scroll to the Integration Proof section.
+
+Say:
+
+```text
+This is the Integration Proof section.
+
+It shows the live-compatible path without changing the strategy core.
+
+The skill can receive a CMC Agent Hub payload, return a Strategy Skill output, and expose a BNB agent wrapper.
+
+The Trust Wallet boundary stays clear. The skill only returns analysis and execution guards. It does not custody funds or sign transactions.
+```
+
+## 1:25 - 1:45 Show BNB Buy
 
 Action: select or stay on `BNB rotation with improving market breadth`.
 
@@ -60,7 +80,7 @@ BNB passes the hard risk gates. Liquidity is sufficient, volatility is inside th
 So the skill returns BUY, but with controlled position sizing, stop loss, take profit, and execution guards.
 ```
 
-## 1:35 - 2:05 Show Risk Blocks
+## 1:45 - 2:10 Show Risk Blocks
 
 Action: select `High-social meme spike rejected by risk gate`, then select `Strong catalyst rejected because CMC data is stale`.
 
@@ -76,7 +96,7 @@ Next, I select the stale catalyst scenario.
 The catalyst is strong, but the market data is too old. The strategy blocks the trade because an agent should not open exposure from stale data.
 ```
 
-## 2:05 - 2:25 Show Eligible Universe Block
+## 2:10 - 2:25 Show Eligible Universe Block
 
 Action: select `Outside eligible universe despite attractive narrative`.
 
@@ -90,7 +110,7 @@ Even when the narrative is positive, the skill blocks the setup because the toke
 This separates alpha quality from execution permission.
 ```
 
-## 2:25 - 2:50 Show Agent Response
+## 2:25 - 2:45 Show Agent Response
 
 Action: scroll to `Agent/tool response`.
 
@@ -104,7 +124,7 @@ It includes the skill name, version, decision, confidence, score breakdown, risk
 The audit section shows deterministic demo mode, adapter-ready status, live-ready status, and warnings.
 ```
 
-## 2:50 - 3:10 Close
+## 2:45 - 3:03 Close
 
 Action: keep Agent/tool response or Simulation summary visible.
 
@@ -127,6 +147,7 @@ Thank you.
 - `analysis-only`
 - `no custody, no signing`
 - `risk gates override hype`
+- `Integration Proof`
 
 ## Do Not Say
 
@@ -138,8 +159,9 @@ Thank you.
 ## Recording Checklist
 
 - Confirm microphone is on before recording.
-- Use the latest local page at `http://127.0.0.1:5173/` unless GitHub Pages is redeployed.
+- Use the latest local page or the deployed GitHub Pages demo after redeploy.
 - Keep browser translation off.
 - Use this scenario order: BNB, FLOKI, CAKE, RANDOM.
 - Show `Judge proof`: `+0.36%` return delta, `0.57%` baseline drawdown, and `0.57%` avoided loss.
+- Show `Integration Proof`: CMC Agent Hub payload, Strategy Skill output, BNB agent wrapper, and Trust Wallet boundary.
 - Show `Agent/tool response`: `output.executionGuards`, `audit.dataMode`, `audit.adapterReady`, and `audit.liveReady`.
