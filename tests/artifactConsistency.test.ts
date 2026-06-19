@@ -8,6 +8,32 @@ describe("submission artifacts", () => {
     expect(skillManifest).toEqual(cmcSkillManifest);
   });
 
+  it("exposes judge-facing proof fields in the review manifest", () => {
+    expect(skillManifest.capabilities).toEqual(
+      expect.arrayContaining([
+        "pre-trade-risk-gates",
+        "backtestable-strategy-spec",
+        "cmc-agent-hub-payload-normalization",
+        "bnb-agent-tool-wrapper",
+      ]),
+    );
+    expect(skillManifest.auditFields).toEqual(
+      expect.arrayContaining(["dataMode", "adapterReady", "liveReady", "riskGateSummary", "warnings"]),
+    );
+    expect(skillManifest.reviewExamples).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: "Deterministic demo response",
+          path: "examples/cmc-skill-response.json",
+        }),
+        expect.objectContaining({
+          name: "Baseline comparison report",
+          path: "docs/backtest-baseline-report.md",
+        }),
+      ]),
+    );
+  });
+
   it("keeps the sample CMC response aligned with the deterministic BNB scenario", () => {
     expect(exampleResponse).toEqual(runCmcSkill(sampleScenarios[0].input));
   });

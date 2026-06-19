@@ -1,0 +1,44 @@
+{
+  "source": "coinmarketcap-agent-hub-live",
+  "generatedAt": "2026-06-18T09:03:00.000Z",
+  "data": {
+    "symbol": "CAKE",
+    "name": "PancakeSwap",
+    "platform": {
+      "name": "BNB Smart Chain"
+    },
+    "quote": {
+      "USD": {
+        "percent_change_24h": 2.6,
+        "percent_change_7d": 5.4,
+        "volume_change_24h": 19
+      }
+    }
+  },
+  "market": {
+    "liquidityUsd": 14500000,
+    "volatility7dPct": 7.2,
+    "fundingRatePct": 0.006,
+    "dataAgeMinutes": 3,
+    "technical": {
+      "rsi14": 54
+    }
+  },
+  "narrative": {
+    "newsScore": 0.63,
+    "socialScore": 0.58,
+    "kolScore": 0.52,
+    "catalystScore": 0.66,
+    "evidence": [
+      "Live-style CMC quote fields were mapped without rewriting the strategy core."
+    ]
+  },
+  "risk": {
+    "maxDrawdownPct": 12,
+    "currentDrawdownPct": 3,
+    "minLiquidityUsd": 5000000,
+    "maxVolatilityPct": 18,
+    "maxDataAgeMinutes": 15,
+    "riskProfile": "balanced"
+  }
+}

@@ -44,6 +44,12 @@
   "audit": {
     "sourceAdapters": ["cmc-style-market", "narrative-alpha", "portfolio-risk"],
     "custodyMode": "analysis-only",
-    "riskGateSummary": "6/6 risk gates passed"
+    "riskGateSummary": "6/6 risk gates passed",
+    "dataMode": "deterministic-demo",
+    "adapterReady": true,
+    "liveReady": false,
+    "warnings": [
+      "Demo scenarios are deterministic fixtures; refresh with a live CMC payload before execution."
+    ]
   }
 }

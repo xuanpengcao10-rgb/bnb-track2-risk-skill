@@ -12,6 +12,7 @@ export interface SimulationRow {
   id: string;
   label: string;
   input: StrategyInput;
+  nextMovePct: number;
   decision: StrategyResult;
   simulationOutcome: SimulationOutcome;
 }
@@ -32,13 +33,29 @@ export interface EquityCurvePoint {
   drawdownPct: number;
 }
 
+export interface BaselineComparison {
+  strategyName: "Risk-gated strategy";
+  baselineName: "Naive buy-all baseline";
+  baselineAllocationPct: number;
+  strategyReturnPct: number;
+  baselineReturnPct: number;
+  returnDeltaPct: number;
+  strategyMaxDrawdownPct: number;
+  baselineMaxDrawdownPct: number;
+  avoidedLosingSetups: number;
+  avoidedLossPct: number;
+  verdict: "risk-gated-outperformed-baseline" | "baseline-outperformed" | "insufficient-scenarios";
+}
+
 export interface SimulationResult {
   rows: SimulationRow[];
   summary: SimulationSummary;
   equityCurve: EquityCurvePoint[];
+  baselineComparison: BaselineComparison;
 }
 
 const round = (value: number, digits = 1) => Number(value.toFixed(digits));
+const BASELINE_ALLOCATION_PCT = 3;
 
 function outcomeFor(decision: StrategyResult, nextMovePct: number): SimulationOutcome {
   if (decision.action === "buy") {
@@ -81,6 +98,77 @@ function outcomeFor(decision: StrategyResult, nextMovePct: number): SimulationOu
   };
 }
 
+function maxDrawdown(curve: EquityCurvePoint[]): number {
+  return round(curve.reduce((max, point) => Math.max(max, point.drawdownPct), 0), 2);
+}
+
+function buildBaselineComparison(rows: SimulationRow[], equityCurve: EquityCurvePoint[]): BaselineComparison {
+  if (rows.length === 0) {
+    return {
+      strategyName: "Risk-gated strategy",
+      baselineName: "Naive buy-all baseline",
+      baselineAllocationPct: BASELINE_ALLOCATION_PCT,
+      strategyReturnPct: 0,
+      baselineReturnPct: 0,
+      returnDeltaPct: 0,
+      strategyMaxDrawdownPct: 0,
+      baselineMaxDrawdownPct: 0,
+      avoidedLosingSetups: 0,
+      avoidedLossPct: 0,
+      verdict: "insufficient-scenarios",
+    };
+  }
+
+  const baselineCurve = rows.reduce<EquityCurvePoint[]>(
+    (curve, row, index) => {
+      const previous = curve[curve.length - 1];
+      const baselineStepReturnPct = round(row.nextMovePct * (BASELINE_ALLOCATION_PCT / 100), 2);
+      const cumulativeReturnPct = round(previous.cumulativeReturnPct + baselineStepReturnPct, 2);
+      const peakReturnPct = Math.max(...curve.map((point) => point.cumulativeReturnPct), cumulativeReturnPct);
+      curve.push({
+        step: index + 1,
+        label: row.input.token.symbol,
+        cumulativeReturnPct,
+        drawdownPct: round(Math.max(0, peakReturnPct - cumulativeReturnPct), 2),
+      });
+      return curve;
+    },
+    [{ step: 0, label: "Start", cumulativeReturnPct: 0, drawdownPct: 0 }],
+  );
+
+  const strategyReturnPct = round(rows.reduce((sum, row) => sum + row.simulationOutcome.estimatedReturnPct, 0), 2);
+  const baselineReturnPct = round(
+    baselineCurve.at(-1)?.cumulativeReturnPct ?? 0,
+    2,
+  );
+  const strategyMaxDrawdownPct = maxDrawdown(equityCurve);
+  const baselineMaxDrawdownPct = maxDrawdown(baselineCurve);
+  const avoidedLossPct = round(
+    rows
+      .filter((row) => row.decision.action === "avoid" && row.nextMovePct < 0)
+      .reduce((sum, row) => sum + Math.abs(row.nextMovePct * (BASELINE_ALLOCATION_PCT / 100)), 0),
+    2,
+  );
+  const verdict =
+    strategyReturnPct >= baselineReturnPct && strategyMaxDrawdownPct <= baselineMaxDrawdownPct
+      ? "risk-gated-outperformed-baseline"
+      : "baseline-outperformed";
+
+  return {
+    strategyName: "Risk-gated strategy",
+    baselineName: "Naive buy-all baseline",
+    baselineAllocationPct: BASELINE_ALLOCATION_PCT,
+    strategyReturnPct,
+    baselineReturnPct,
+    returnDeltaPct: round(strategyReturnPct - baselineReturnPct, 2),
+    strategyMaxDrawdownPct,
+    baselineMaxDrawdownPct,
+    avoidedLosingSetups: rows.filter((row) => row.decision.action === "avoid" && row.simulationOutcome.label === "capital_preserved").length,
+    avoidedLossPct,
+    verdict,
+  };
+}
+
 export function runSimulation(scenarios: StrategyScenario[]): SimulationResult {
   const rows = scenarios.map((scenario) => {
     const decision = evaluateStrategy(scenario.input);
@@ -88,6 +176,7 @@ export function runSimulation(scenarios: StrategyScenario[]): SimulationResult {
       id: scenario.id,
       label: scenario.label,
       input: scenario.input,
+      nextMovePct: scenario.nextMovePct,
       decision,
       simulationOutcome: outcomeFor(decision, scenario.nextMovePct),
     };
@@ -138,5 +227,6 @@ export function runSimulation(scenarios: StrategyScenario[]): SimulationResult {
       capitalPreservedPct,
     },
     equityCurve,
+    baselineComparison: buildBaselineComparison(rows, equityCurve),
   };
 }

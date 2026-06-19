@@ -40,5 +40,30 @@
     "trading": "analysis-only",
     "externalApis": ["CoinMarketCap Agent Hub compatible input adapter"]
   },
-  "integrations": ["CoinMarketCap Agent Hub", "BNB Agent SDK", "Trust Wallet Agent Kit"]
+  "integrations": ["CoinMarketCap Agent Hub", "BNB Agent SDK", "Trust Wallet Agent Kit"],
+  "capabilities": [
+    "pre-trade-risk-gates",
+    "backtestable-strategy-spec",
+    "cmc-agent-hub-payload-normalization",
+    "bnb-agent-tool-wrapper",
+    "analysis-only-execution-guards"
+  ],
+  "auditFields": ["dataMode", "adapterReady", "liveReady", "riskGateSummary", "warnings"],
+  "reviewExamples": [
+    {
+      "name": "Deterministic demo response",
+      "path": "examples/cmc-skill-response.json",
+      "purpose": "Shows the exact JSON payload a downstream agent can consume."
+    },
+    {
+      "name": "Live-style CMC Agent Hub payload",
+      "path": "examples/cmc-agent-hub-payload.json",
+      "purpose": "Shows the enriched CMC-compatible adapter input shape."
+    },
+    {
+      "name": "Baseline comparison report",
+      "path": "docs/backtest-baseline-report.md",
+      "purpose": "Compares risk-gated decisions against a naive buy-all baseline."
+    }
+  ]
 }

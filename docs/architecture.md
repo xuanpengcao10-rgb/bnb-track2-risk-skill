@@ -8,7 +8,7 @@ flowchart LR
   scenario["Deterministic sample scenarios"] --> strategy["evaluateStrategy"]
   cmcAdapter --> strategy
   strategy --> skill["runCmcSkill response with score breakdown"]
-  strategy --> simulation["runSimulation backtest and equity curve"]
+  strategy --> simulation["runSimulation scenario replay and equity curve"]
   skill --> bnbTool["bnbAgentStrategyTool"]
   skill --> dashboard["Browser demo dashboard"]
   simulation --> dashboard
@@ -19,7 +19,7 @@ flowchart LR
 ## Boundaries
 
 - `src/core/strategy.ts` contains scoring, risk gates, position sizing, invalidation, and agent-readable output.
-- `src/core/simulation.ts` runs deterministic scenarios, computes outcome labels, and returns an equity curve for audit.
+- `src/core/simulation.ts` runs deterministic scenarios, computes replay outcome labels, and returns an equity curve for audit.
 - `src/integrations/cmcAgentHub.ts` maps a live-style CMC Agent Hub payload into the strategy input schema.
 - `src/integrations/cmcSkill.ts` returns the CMC Skill-style response and audit metadata.
 - `src/integrations/bnbAgentTool.ts` exposes an analysis-only tool wrapper for BNB agent use.
@@ -29,6 +29,6 @@ flowchart LR
 
 1. Run `npm run verify`.
 2. Open the GitHub Pages demo or local Vite demo.
-3. Select each scenario and inspect the risk gates, score breakdown, equity curve, and agent-readable JSON.
+3. Select each scenario and inspect the risk gates, score breakdown, scenario replay curve, and agent-readable JSON.
 4. Inspect `examples/cmc-agent-hub-payload.json` and `src/integrations/cmcAgentHub.ts` to see how live CMC-style data enters the skill.
 5. Inspect `src/integrations/bnbAgentTool.ts` to see the BNB agent wrapper contract.

@@ -7,7 +7,7 @@
 - Keep the repo name short, for example `bnb-track2-risk-skill`.
 - Confirm GitHub Actions `CI` passes.
 
-Current repository target: `https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill`
+Final repository URL to paste: `https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill`
 
 If local Git credentials are missing, use `docs/github-push-guide.md`.
 
@@ -16,7 +16,7 @@ If local Git credentials are missing, use `docs/github-push-guide.md`.
 - Enable GitHub Pages with GitHub Actions as the source.
 - Run the `Deploy Demo` workflow.
 - Copy the GitHub Pages URL into DoraHacks as the demo link.
-- Live GitHub Pages URL: `https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/`
+- Final demo page URL to paste after the latest deployment finishes: `https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/`
 - If Pages is not available, record the local demo at `http://127.0.0.1:5173/` and upload the video.
 
 ## DoraHacks fields
@@ -36,13 +36,16 @@ npm run verify
 npm run dev
 ```
 
-Open the demo, switch all five scenarios, and confirm the Agent-readable output panel, score breakdown, equity curve, and simulation summary update.
+Open the demo, switch all five scenarios, and confirm the Agent/tool response panel, score breakdown, scenario replay curve, Judge proof baseline comparison, and simulation summary update.
 
 ## Demo video recording
 
+- Start with `npm run verify` or show the successful terminal output if recording locally.
 - Show the GitHub Pages demo URL.
 - Select the BNB scenario and explain the controlled `buy`.
 - Select the meme spike, stale catalyst, and ineligible token scenarios to show hard risk blocks.
-- Show the backtest equity curve and capital-preserved metric.
-- Show the Agent-readable output panel.
-- Mention `examples/cmc-agent-hub-payload.json` and `bnbAgentStrategyTool` as the live adapter and agent wrapper.
+- Show the deterministic scenario replay curve and capital-preserved metric.
+- Show the Judge proof section: `+0.36%` return delta, `0.57%` baseline drawdown, and `0.57%` avoided loss.
+- Show the Agent/tool response panel, including `output.executionGuards`, `audit.dataMode`, `audit.adapterReady`, and `audit.liveReady`.
+- Mention `examples/cmc-agent-hub-payload.json`, `examples/cmc-data-quote-payload.json`, and `bnbAgentStrategyTool` as the live-compatible adapter and agent wrapper.
+- Say clearly: "The demo data is deterministic for judging; live deployment refreshes the CMC payload before execution."

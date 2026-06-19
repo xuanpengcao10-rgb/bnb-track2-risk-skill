@@ -1,35 +1,145 @@
-# Demo Script
+# Demo Video Script
+
+Target length: 2:50 to 3:10.
+
+Record the latest local demo at `http://127.0.0.1:5173/` unless GitHub Pages has already been redeployed with the latest changes.
 
 ## 0:00 - 0:20 Opening
 
-This is Risk-Gated Narrative Alpha Skill, a BNB Hack Track 2 strategy skill for AI trading agents. The goal is not to predict every token move. The goal is to help an agent decide when to trade, how small to size, and when to refuse the setup.
+Action: show the first screen.
 
-## 0:20 - 0:55 Show the dashboard
+Say:
 
-Open the browser demo. The left side contains deterministic scenarios. The main panel shows the selected token, the skill decision, confidence, signal score, risk score, position size, stop loss, and backtest equity curve.
+```text
+Hi, this is Risk-Gated Narrative Alpha Skill, a Track 2 Strategy Skill for the BNB Hack.
 
-Select the BNB rotation scenario. Explain that the token passes all hard gates, so the skill allows controlled exposure and returns a `buy` decision.
+The idea is simple: an AI trading agent should not only know when to buy. It should also know when not to trade.
+```
 
-## 0:55 - 1:35 Show risk gate behavior
+## 0:20 - 0:45 Explain The Skill
 
-Select the high-social meme spike. The narrative is attractive, but volatility, funding, and RSI indicate crowding risk. The skill returns `avoid`, proving that risk gates override hype.
+Action: keep the first screen visible. Point to Data mode, Adapter-ready, Custody, and the BNB decision card.
 
-Then select the stale catalyst scenario. The catalyst looks strong, but the CMC-style market snapshot is older than the allowed freshness window, so the skill returns `avoid`.
+Say:
 
-Then select the ineligible token scenario. Even with positive narrative evidence, the skill blocks it because it is outside the eligible universe.
+```text
+This skill takes CMC-style market data, narrative signals, and portfolio risk limits, then returns a structured buy, hold, or avoid decision.
 
-## 1:35 - 2:10 Show agent-readable JSON
+The demo data is deterministic, so judges can reproduce the same result without paid API keys or wallet setup.
 
-Point to the simulation summary first. The equity curve shows cumulative return across the deterministic scenarios, while the capital-preserved metric shows avoided setups that later moved against risk-seeking buyers.
+The adapter path is ready, but this demo is analysis-only. It never stores keys, never signs transactions, and never executes trades.
+```
 
-Then open the Agent-readable output panel. This is the payload an agent can consume directly: version, token, decision, confidence, score breakdown, max position, stop loss, evidence, invalidation, and risk gates.
+## 0:45 - 1:10 Show Judge Proof
 
-This keeps UI presentation separate from agent execution.
+Action: scroll to the Judge proof section.
 
-## 2:10 - 2:40 Integration explanation
+Say:
 
-The demo data uses CMC-style fields so judges can run it without paid accounts. In a live deployment, `normalizeCmcAgentHubPayload` can populate the same schema from a CMC Agent Hub payload. The result can be called through `bnbAgentStrategyTool` and passed to a Trust Wallet-compatible executor, but this skill never holds keys or signs trades.
+```text
+Here is the judge proof section.
 
-## 2:40 - 3:00 Close
+The deterministic replay compares this risk-gated strategy against a naive buy-all baseline.
 
-The key idea is survivability for trading agents. The skill helps agents avoid disallowed tokens, crowded spikes, excessive volatility, and stale or invalidated theses before capital is put at risk.
+On this scenario set, the strategy has a positive return delta, lower drawdown, and avoided loss from blocked setups.
+
+This is the main point of the project: risk gates are measurable, not just UI copy.
+```
+
+## 1:10 - 1:35 Show BNB Buy
+
+Action: select or stay on `BNB rotation with improving market breadth`.
+
+Say:
+
+```text
+First, I select the BNB rotation scenario.
+
+BNB passes the hard risk gates. Liquidity is sufficient, volatility is inside the limit, the market snapshot is fresh, and the token is eligible.
+
+So the skill returns BUY, but with controlled position sizing, stop loss, take profit, and execution guards.
+```
+
+## 1:35 - 2:05 Show Risk Blocks
+
+Action: select `High-social meme spike rejected by risk gate`, then select `Strong catalyst rejected because CMC data is stale`.
+
+Say:
+
+```text
+Now I select the high-social meme spike scenario.
+
+The narrative looks attractive, but volatility and RSI show crowding risk. The skill returns AVOID. Risk gates override hype.
+
+Next, I select the stale catalyst scenario.
+
+The catalyst is strong, but the market data is too old. The strategy blocks the trade because an agent should not open exposure from stale data.
+```
+
+## 2:05 - 2:25 Show Eligible Universe Block
+
+Action: select `Outside eligible universe despite attractive narrative`.
+
+Say:
+
+```text
+Now I select the outside eligible universe scenario.
+
+Even when the narrative is positive, the skill blocks the setup because the token is outside the allowed universe.
+
+This separates alpha quality from execution permission.
+```
+
+## 2:25 - 2:50 Show Agent Response
+
+Action: scroll to `Agent/tool response`.
+
+Say:
+
+```text
+This is the payload a downstream agent can consume directly.
+
+It includes the skill name, version, decision, confidence, score breakdown, risk gates, execution guards, take profit, cooldown, and audit metadata.
+
+The audit section shows deterministic demo mode, adapter-ready status, live-ready status, and warnings.
+```
+
+## 2:50 - 3:10 Close
+
+Action: keep Agent/tool response or Simulation summary visible.
+
+Say:
+
+```text
+In a live deployment, the same strategy can receive a fresh CMC Agent Hub payload through the normalizer, and it can be wrapped by the BNB agent tool.
+
+The value of this project is survivability for trading agents: avoid disallowed tokens, crowded spikes, stale data, excessive volatility, and invalidated trade theses before capital is put at risk.
+
+Thank you.
+```
+
+## Must Say
+
+- `Track 2 Strategy Skill`
+- `deterministic demo`
+- `CMC Agent Hub payload`
+- `adapter-ready`
+- `analysis-only`
+- `no custody, no signing`
+- `risk gates override hype`
+
+## Do Not Say
+
+- Do not say this is a live trading bot.
+- Do not say it uses real-time data in the demo.
+- Do not say it can execute trades by itself.
+- Do not say it guarantees profit.
+
+## Recording Checklist
+
+- Confirm microphone is on before recording.
+- Use the latest local page at `http://127.0.0.1:5173/` unless GitHub Pages is redeployed.
+- Keep browser translation off.
+- Use this scenario order: BNB, FLOKI, CAKE, RANDOM.
+- Show `Judge proof`: `+0.36%` return delta, `0.57%` baseline drawdown, and `0.57%` avoided loss.
+- Show `Agent/tool response`: `output.executionGuards`, `audit.dataMode`, `audit.adapterReady`, and `audit.liveReady`.

@@ -136,6 +136,8 @@ Many trading demos optimize for picking winners. This skill optimizes for surviv
 
 This makes it useful as a pre-trade guardrail for agents competing under drawdown and trade-count constraints.
 
-## Backtest evidence
+## Deterministic scenario replay evidence
 
-`runSimulation(sampleScenarios)` returns deterministic rows, an aggregate summary, and an equity curve. The curve starts at `0%`, adds each scenario outcome, tracks drawdown from peak return, and exposes `capitalPreservedPct` so judges can see when avoided trades protected capital.
+`runSimulation(sampleScenarios)` returns deterministic rows, an aggregate summary, an equity curve, and a baseline comparison. The curve starts at `0%`, adds each scenario outcome, tracks drawdown from peak return, and exposes `capitalPreservedPct` so judges can see when avoided trades protected capital.
+
+The baseline comparison models a naive buy-all strategy that allocates `3%` to every deterministic scenario. On the current sample set, the risk-gated strategy returns `0.21%` versus `-0.15%` for the baseline, lowers max drawdown from `0.57%` to `0.00%`, and avoids two losing setups. The full report is in `docs/backtest-baseline-report.md`.

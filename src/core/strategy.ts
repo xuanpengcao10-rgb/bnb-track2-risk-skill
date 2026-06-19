@@ -112,9 +112,11 @@ function buildPosition(action: StrategyAction, signalScore: number, input: Strat
   if (action === "avoid") {
     return { maxPortfolioPct: 0, stopLossPct: 0, takeProfitPct: 0, cooldownHours: 12 };
   }
-  const remainingDrawdown = clamp(input.risk.maxDrawdownPct - input.risk.currentDrawdownPct, 0, input.risk.maxDrawdownPct);
-  const drawdownFactor = clamp(remainingDrawdown / input.risk.maxDrawdownPct, 0.25, 1);
-  const volatilityFactor = clamp(1 - input.market.volatility7dPct / (input.risk.maxVolatilityPct * 1.6), 0.28, 1);
+  const drawdownLimit = Math.max(input.risk.maxDrawdownPct, 0.1);
+  const volatilityLimit = Math.max(input.risk.maxVolatilityPct, 0.1);
+  const remainingDrawdown = clamp(drawdownLimit - input.risk.currentDrawdownPct, 0, drawdownLimit);
+  const drawdownFactor = clamp(remainingDrawdown / drawdownLimit, 0.25, 1);
+  const volatilityFactor = clamp(1 - input.market.volatility7dPct / (volatilityLimit * 1.6), 0.28, 1);
   const base = action === "buy" ? 8 : 3.2;
   const conviction = clamp(signalScore / 82, 0.45, 1.18);
   const maxPortfolioPct = round(base * conviction * drawdownFactor * volatilityFactor * profileMultiplier(input.risk.riskProfile), 1);

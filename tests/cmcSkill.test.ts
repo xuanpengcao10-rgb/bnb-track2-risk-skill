@@ -22,5 +22,9 @@ describe("CMC skill adapter", () => {
     expect(response.output.executionGuards.length).toBeGreaterThan(0);
     expect(response.audit.sourceAdapters).toEqual(["cmc-style-market", "narrative-alpha", "portfolio-risk"]);
     expect(response.audit.custodyMode).toBe("analysis-only");
+    expect(response.audit.dataMode).toBe("deterministic-demo");
+    expect(response.audit.adapterReady).toBe(true);
+    expect(response.audit.liveReady).toBe(false);
+    expect(response.audit.warnings).toContain("Demo scenarios are deterministic fixtures; refresh with a live CMC payload before execution.");
   });
 });

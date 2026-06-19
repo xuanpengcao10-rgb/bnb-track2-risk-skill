@@ -15,6 +15,7 @@ import { runSimulation } from "../core/simulation.js";
 import type { EquityCurvePoint } from "../core/simulation.js";
 import type { RiskGateResult, StrategyAction } from "../core/types.js";
 import { sampleScenarios } from "../data/scenarios.js";
+import { runCmcSkill } from "../integrations/cmcSkill.js";
 
 const formatUsd = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -52,10 +53,12 @@ export function App() {
   const [scenarioId, setScenarioId] = useState(sampleScenarios[0].id);
   const scenario = sampleScenarios.find((item) => item.id === scenarioId) ?? sampleScenarios[0];
   const decision = useMemo(() => evaluateStrategy(scenario.input), [scenario]);
+  const skillResponse = useMemo(() => runCmcSkill(scenario.input), [scenario]);
   const simulation = useMemo(() => runSimulation(sampleScenarios), []);
   const action = actionCopy[decision.action];
-  const json = JSON.stringify(decision.agentOutput, null, 2);
+  const json = JSON.stringify(skillResponse, null, 2);
   const freshnessGate = decision.risk.gates.find((gate) => gate.id === "data-freshness");
+  const failedGates = decision.risk.gates.filter((gate) => !gate.passed);
 
   return (
     <main className="app-shell">
@@ -69,9 +72,14 @@ export function App() {
             custody-free decision: when to buy, hold, or refuse the trade.
           </p>
           <div className="hero-links" aria-label="Integration targets">
-            <span>CMC-style signal schema</span>
-            <span>BNB Agent SDK compatible</span>
-            <span>Trust Wallet execution guard</span>
+            <span>Deterministic demo path</span>
+            <span>CMC Agent Hub adapter ready</span>
+            <span>No key custody</span>
+          </div>
+          <div className="readiness-band" aria-label="Submission readiness">
+            <StatusChip label="Data mode" value={skillResponse.audit.dataMode} />
+            <StatusChip label="Adapter-ready" value={skillResponse.audit.adapterReady ? "yes" : "no"} />
+            <StatusChip label="Custody" value={skillResponse.audit.custodyMode} />
           </div>
         </div>
 
@@ -87,10 +95,29 @@ export function App() {
             </div>
           </div>
           <p>{action.detail}</p>
+          <div className={failedGates.length > 0 ? "gate-callout blocked" : "gate-callout clear"}>
+            <strong>{failedGates.length > 0 ? `${failedGates.length} gate blocked execution` : "All hard gates open"}</strong>
+            <span>{failedGates[0]?.label ?? "Position sizing remains capped by returned guards."}</span>
+          </div>
           <div className="decision-foot">
             <span>{decision.risk.summary}</span>
             <span>Data age {freshnessGate?.observed ?? "not supplied"}</span>
           </div>
+        </div>
+      </section>
+
+      <section className="integration-strip" aria-label="Live integration boundary">
+        <div>
+          <strong>Real module</strong>
+          <span>Strategy engine, risk gates, agent JSON contract, CMC payload normalizer, BNB tool wrapper.</span>
+        </div>
+        <div>
+          <strong>Deterministic fixture</strong>
+          <span>Market snapshots and scenario outcomes stay fixed so judges can reproduce the same run.</span>
+        </div>
+        <div>
+          <strong>Execution boundary</strong>
+          <span>The module returns guards only; a user-approved wallet executor must sign any transaction.</span>
         </div>
       </section>
 
@@ -99,6 +126,35 @@ export function App() {
         <ProofPoint label="Risk blocks" value={simulation.summary.riskBlockedCount.toString()} detail="hard gate refusals" />
         <ProofPoint label="Capital preserved" value={`${simulation.summary.capitalPreservedPct}%`} detail="blocked losing setups" />
         <ProofPoint label="Custody" value="0" detail="keys or signatures held" />
+      </section>
+
+      <section className="judge-proof" aria-label="Judge proof">
+        <div className="judge-proof-copy">
+          <span>Judge proof</span>
+          <h2>Backtestable risk gates with an agent-ready contract</h2>
+          <p>
+            The deterministic replay compares the skill against a naive buy-all baseline using the same scenarios.
+            The strategy protected capital on losing setups while keeping the output consumable by downstream agents.
+          </p>
+        </div>
+        <div className="baseline-board" aria-label="Baseline comparison">
+          <div className="baseline-lead">
+            <span>{simulation.baselineComparison.strategyName}</span>
+            <strong>{formatSignedPct(simulation.baselineComparison.returnDeltaPct)}</strong>
+            <small>return delta vs {simulation.baselineComparison.baselineName.toLowerCase()}</small>
+          </div>
+          <div className="baseline-grid">
+            <Metric label="Strategy return" value={simulation.baselineComparison.strategyReturnPct} suffix="%" />
+            <Metric label="Baseline return" value={simulation.baselineComparison.baselineReturnPct} suffix="%" />
+            <Metric label="Baseline drawdown" value={simulation.baselineComparison.baselineMaxDrawdownPct} suffix="%" />
+            <Metric label="Avoided loss" value={simulation.baselineComparison.avoidedLossPct} suffix="%" />
+          </div>
+          <div className="evidence-list">
+            <span>Backtest report available in docs/backtest-baseline-report.md</span>
+            <span>Review examples cover CMC response, CMC payload, and baseline evidence</span>
+            <span>Execution boundary stays analysis-only: no custody, no signing</span>
+          </div>
+        </div>
       </section>
 
       <section className="workspace-grid" id="analysis">
@@ -115,7 +171,7 @@ export function App() {
             >
               <span>{item.input.token.symbol}</span>
               <strong>{item.label}</strong>
-              <small>next move {item.nextMovePct > 0 ? "+" : ""}{item.nextMovePct}%</small>
+              <small>replay outcome {item.nextMovePct > 0 ? "+" : ""}{item.nextMovePct}%</small>
             </button>
           ))}
         </aside>
@@ -170,7 +226,7 @@ export function App() {
 
           <div className="split-grid lower">
             <section className="panel json-panel">
-              <div className="panel-title"><Code size={18} weight="bold" /> Agent-readable output</div>
+              <div className="panel-title"><Code size={18} weight="bold" /> Agent/tool response</div>
               <pre>{json}</pre>
             </section>
 
@@ -189,6 +245,10 @@ export function App() {
                 <span>BNB agent tool wrapper</span>
                 <span>Custody-free wallet guardrails</span>
               </div>
+              <div className="audit-box" aria-label="Audit warnings">
+                <strong>Audit note</strong>
+                <span>{skillResponse.audit.warnings[0]}</span>
+              </div>
               <p className="simulation-note">
                 Sample data is deterministic for judging. Live deployments can replace the scenario adapter with
                 CMC Agent Hub feeds and route the output into a BNB trading agent.
@@ -200,6 +260,8 @@ export function App() {
     </main>
   );
 }
+
+const formatSignedPct = (value: number) => `${value > 0 ? "+" : ""}${value}%`;
 
 function EquityCurveChart({ curve }: { curve: EquityCurvePoint[] }) {
   const width = 360;
@@ -220,10 +282,10 @@ function EquityCurveChart({ curve }: { curve: EquityCurvePoint[] }) {
   return (
     <div className="equity-card">
       <div className="equity-head">
-        <span>Backtest equity curve</span>
+        <span>Deterministic scenario replay</span>
         <strong>{curve.at(-1)?.cumulativeReturnPct ?? 0}%</strong>
       </div>
-      <svg className="equity-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Deterministic backtest equity curve">
+      <svg className="equity-chart" viewBox={`0 0 ${width} ${height}`} role="img" aria-label="Deterministic scenario replay curve">
         <line className="equity-zero" x1={padding} x2={width - padding} y1={zeroY} y2={zeroY} />
         <polyline className="equity-line" points={line} fill="none" />
         {points.map((point) => (
@@ -252,6 +314,15 @@ function ProofPoint({ label, value, detail }: { label: string; value: string; de
       <span>{label}</span>
       <strong>{value}</strong>
       <small>{detail}</small>
+    </div>
+  );
+}
+
+function StatusChip({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="status-chip">
+      <span>{label}</span>
+      <strong>{value}</strong>
     </div>
   );
 }

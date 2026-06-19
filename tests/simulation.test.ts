@@ -51,4 +51,43 @@ describe("runSimulation", () => {
     expect(result.equityCurve.at(-1)?.cumulativeReturnPct).toBe(result.summary.estimatedPortfolioReturnPct);
     expect(result.summary.capitalPreservedPct).toBeGreaterThan(0);
   });
+
+  it("compares the risk-gated strategy against a naive buy-all baseline", () => {
+    const result = runSimulation(sampleScenarios);
+
+    expect(result.baselineComparison.strategyReturnPct).toBe(result.summary.estimatedPortfolioReturnPct);
+    expect(result.baselineComparison.baselineName).toBe("Naive buy-all baseline");
+    expect(result.baselineComparison.baselineReturnPct).toBeLessThan(result.baselineComparison.strategyReturnPct);
+    expect(result.baselineComparison.strategyMaxDrawdownPct).toBeLessThan(result.baselineComparison.baselineMaxDrawdownPct);
+    expect(result.baselineComparison.avoidedLosingSetups).toBeGreaterThanOrEqual(2);
+    expect(result.baselineComparison.verdict).toBe("risk-gated-outperformed-baseline");
+  });
+
+  it("returns a stable empty replay when no scenarios are supplied", () => {
+    const result = runSimulation([]);
+
+    expect(result.rows).toEqual([]);
+    expect(result.summary).toEqual({
+      totalScenarios: 0,
+      actionCounts: { buy: 0, hold: 0, avoid: 0 },
+      averageConfidence: 0,
+      riskBlockedCount: 0,
+      estimatedPortfolioReturnPct: 0,
+      capitalPreservedPct: 0,
+    });
+    expect(result.equityCurve).toEqual([{ step: 0, label: "Start", cumulativeReturnPct: 0, drawdownPct: 0 }]);
+    expect(result.baselineComparison).toEqual({
+      strategyName: "Risk-gated strategy",
+      baselineName: "Naive buy-all baseline",
+      baselineAllocationPct: 3,
+      strategyReturnPct: 0,
+      baselineReturnPct: 0,
+      returnDeltaPct: 0,
+      strategyMaxDrawdownPct: 0,
+      baselineMaxDrawdownPct: 0,
+      avoidedLosingSetups: 0,
+      avoidedLossPct: 0,
+      verdict: "insufficient-scenarios",
+    });
+  });
 });

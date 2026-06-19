@@ -4,14 +4,31 @@ import { runCmcSkill, type CmcSkillResponse } from "./cmcSkill.js";
 interface CmcAgentHubPayload {
   source?: string;
   generatedAt?: string;
-  asset: {
+  asset?: {
     symbol: string;
     name?: string;
     chain?: string;
     eligible?: boolean;
     eligibleForTrack?: boolean;
   };
-  market: {
+  data?: {
+    symbol?: string;
+    name?: string;
+    chain?: string;
+    eligible?: boolean;
+    eligibleForTrack?: boolean;
+    platform?: {
+      name?: string;
+    };
+    quote?: {
+      USD?: {
+        percent_change_24h?: number;
+        percent_change_7d?: number;
+        volume_change_24h?: number;
+      };
+    };
+  };
+  market?: {
     quote?: {
       USD?: {
         percent_change_24h?: number;
@@ -36,7 +53,7 @@ interface CmcAgentHubPayload {
     };
     rsi14?: number;
   };
-  narrative: {
+  narrative?: {
     news_score?: number;
     newsScore?: number;
     social_score?: number;
@@ -72,32 +89,38 @@ const riskProfileValue = (value: string | undefined): RiskProfile => {
 };
 
 export function normalizeCmcAgentHubPayload(payload: CmcAgentHubPayload): StrategyInput {
-  const quote = payload.market.quote?.USD;
+  const asset = payload.asset ?? payload.data;
+  if (!asset?.symbol) {
+    throw new Error("CMC Agent Hub payload requires asset.symbol or data.symbol.");
+  }
+  const market = payload.market ?? {};
+  const quote = market.quote?.USD ?? payload.data?.quote?.USD;
+  const narrative = payload.narrative ?? {};
   const risk = payload.portfolioRisk ?? payload.risk ?? {};
 
   return {
     token: {
-      symbol: payload.asset.symbol,
-      name: payload.asset.name ?? payload.asset.symbol,
-      chain: payload.asset.chain ?? "BNB Chain",
-      eligible: payload.asset.eligibleForTrack ?? payload.asset.eligible ?? false,
+      symbol: asset.symbol,
+      name: asset.name ?? asset.symbol,
+      chain: asset.chain ?? payload.data?.platform?.name ?? "BNB Chain",
+      eligible: asset.eligibleForTrack ?? asset.eligible ?? false,
     },
     market: {
-      priceChange24hPct: numberValue(payload.market.priceChange24hPct ?? quote?.percent_change_24h, 0),
-      priceChange7dPct: numberValue(payload.market.priceChange7dPct ?? quote?.percent_change_7d, 0),
-      volumeChange24hPct: numberValue(payload.market.volumeChange24hPct ?? quote?.volume_change_24h, 0),
-      liquidityUsd: numberValue(payload.market.liquidityUsd ?? payload.market.liquidity_usd, 0),
-      volatility7dPct: numberValue(payload.market.volatility7dPct ?? payload.market.volatility_7d_pct, 0),
-      fundingRatePct: numberValue(payload.market.fundingRatePct ?? payload.market.funding_rate_pct, 0),
-      rsi14: numberValue(payload.market.rsi14 ?? payload.market.technical?.rsi14 ?? payload.market.technical?.rsi_14, 50),
-      dataAgeMinutes: payload.market.dataAgeMinutes ?? payload.market.data_age_minutes,
+      priceChange24hPct: numberValue(market.priceChange24hPct ?? quote?.percent_change_24h, 0),
+      priceChange7dPct: numberValue(market.priceChange7dPct ?? quote?.percent_change_7d, 0),
+      volumeChange24hPct: numberValue(market.volumeChange24hPct ?? quote?.volume_change_24h, 0),
+      liquidityUsd: numberValue(market.liquidityUsd ?? market.liquidity_usd, 0),
+      volatility7dPct: numberValue(market.volatility7dPct ?? market.volatility_7d_pct, 0),
+      fundingRatePct: numberValue(market.fundingRatePct ?? market.funding_rate_pct, 0),
+      rsi14: numberValue(market.rsi14 ?? market.technical?.rsi14 ?? market.technical?.rsi_14, 50),
+      dataAgeMinutes: market.dataAgeMinutes ?? market.data_age_minutes,
     },
     narrative: {
-      newsScore: scoreValue(payload.narrative.news_score, payload.narrative.newsScore),
-      socialScore: scoreValue(payload.narrative.social_score, payload.narrative.socialScore),
-      kolScore: scoreValue(payload.narrative.kol_score, payload.narrative.kolScore),
-      catalystScore: scoreValue(payload.narrative.catalyst_score, payload.narrative.catalystScore),
-      evidence: payload.narrative.evidence ?? [],
+      newsScore: scoreValue(narrative.news_score, narrative.newsScore),
+      socialScore: scoreValue(narrative.social_score, narrative.socialScore),
+      kolScore: scoreValue(narrative.kol_score, narrative.kolScore),
+      catalystScore: scoreValue(narrative.catalyst_score, narrative.catalystScore),
+      evidence: narrative.evidence ?? [],
     },
     risk: {
       maxDrawdownPct: numberValue(risk.maxDrawdownPct ?? risk.max_drawdown_pct, 12),
@@ -111,13 +134,36 @@ export function normalizeCmcAgentHubPayload(payload: CmcAgentHubPayload): Strate
 }
 
 export function runCmcAgentHubSkill(payload: CmcAgentHubPayload): CmcSkillResponse {
-  const response = runCmcSkill(normalizeCmcAgentHubPayload(payload));
+  const input = normalizeCmcAgentHubPayload(payload);
+  const response = runCmcSkill(input);
+  const market = payload.market ?? {};
+  const hasSupplementalMarket =
+    (market.liquidityUsd ?? market.liquidity_usd) !== undefined &&
+    (market.volatility7dPct ?? market.volatility_7d_pct) !== undefined;
+  const hasSupplementalRisk = Boolean(payload.portfolioRisk ?? payload.risk);
+  const readinessWarnings: string[] = [];
+  const warnings = [
+    "Live-compatible payloads still require a fresh CMC fetch and user-approved execution before any wallet action.",
+  ];
+  if (!payload.generatedAt) readinessWarnings.push("Payload generatedAt is missing; rely on the data-freshness gate before execution.");
+  if (input.market.dataAgeMinutes === undefined) readinessWarnings.push("Market data age is missing; add dataAgeMinutes for stricter stale-data protection.");
+  if (input.narrative.evidence.length === 0) readinessWarnings.push("Narrative evidence is empty; provide cited market or catalyst evidence before sizing.");
+  if (!hasSupplementalMarket || !hasSupplementalRisk) {
+    readinessWarnings.push("Supplemental liquidity, volatility, and risk limits are missing; defaults force conservative analysis.");
+  }
+  warnings.push(...readinessWarnings);
 
   return {
     ...response,
     audit: {
       ...response.audit,
       sourceAdapters: ["cmc-agent-hub-payload", ...response.audit.sourceAdapters],
+      dataMode: "live-compatible-payload",
+      adapterReady: true,
+      liveReady: readinessWarnings.length === 0,
+      inputSource: payload.source ?? "cmc-agent-hub-payload",
+      inputGeneratedAt: payload.generatedAt,
+      warnings,
     },
   };
 }

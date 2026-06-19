@@ -6,12 +6,23 @@ BNB Hack Track 2 submission: a strategy skill for AI trading agents that turns m
 
 The skill is built around one practical idea: a trading agent should know when not to trade. Instead of returning a simple bullish or bearish label, it adds hard risk gates, position sizing, invalidation rules, and execution guards that downstream agents can read directly.
 
+## Submission truth table
+
+| Area | Status in this repo | How judges can verify |
+| --- | --- | --- |
+| Strategy engine | Real TypeScript scoring, risk gates, sizing, invalidation, and guards | `npm run verify`, `src/core/strategy.ts`, `tests/strategy.test.ts` |
+| CMC data path | Live-compatible adapter plus deterministic fixtures and raw-quote safety coverage | `examples/cmc-agent-hub-payload.json`, `examples/cmc-data-quote-payload.json`, `tests/cmcAgentHub.test.ts` |
+| Agent contract | Full CMC Skill response and BNB tool wrapper | `examples/cmc-skill-response.json`, `src/integrations/bnbAgentTool.ts` |
+| Baseline evidence | Backtestable deterministic replay against a naive buy-all baseline | `docs/backtest-baseline-report.md`, `tests/simulation.test.ts` |
+| Wallet execution | Intentionally out of scope; analysis-only, no custody, no signing | `permissions.trading: "analysis-only"` and returned execution guards |
+| Demo data | Deterministic scenario replay for reproducible judging | Browser demo, `src/data/scenarios.ts`, `src/core/simulation.ts` |
+
 ## Why this fits Track 2
 
 - **Strategy Skill:** produces a reusable decision module that an AI trading agent can call before opening a position.
 - **Real-world relevance:** focuses on drawdown control, liquidity, volatility, crowding, stale data, and custody boundaries.
 - **CMC compatibility:** accepts CMC-style market and narrative inputs. The demo uses deterministic sample data so judges can run it without paid API keys.
-- **Live-style CMC adapter:** includes a CMC Agent Hub payload normalizer in `src/integrations/cmcAgentHub.ts` plus `examples/cmc-agent-hub-payload.json`.
+- **Live-style CMC adapter:** includes a CMC Agent Hub payload normalizer in `src/integrations/cmcAgentHub.ts` plus two payload fixtures under `examples/`.
 - **BNB Agent SDK compatibility:** exports plain TypeScript functions, stable JSON output, and `bnbAgentStrategyTool` for agent tool wrapping.
 - **Trust Wallet compatibility:** returns execution guards only. It never stores keys, signs transactions, or executes trades by itself.
 
@@ -38,7 +49,8 @@ It returns:
 - Risk gate results
 - Invalidation conditions
 - Agent-readable JSON payload
-- Deterministic backtest summary with equity curve and capital-preservation rate
+- Deterministic scenario replay with equity curve and capital-preservation rate
+- Baseline comparison against a naive buy-all strategy
 
 ## Run locally
 
@@ -59,7 +71,7 @@ npm run verify
 npm run dev
 ```
 
-Review `docs/judge-notes.md`, `submissions/skill-manifest.json`, and `examples/cmc-skill-response.json` for the strategy contract and agent response shape.
+Review `docs/judge-notes.md`, `docs/backtest-baseline-report.md`, `submissions/skill-manifest.json`, and `examples/cmc-skill-response.json` for the strategy contract, baseline evidence, and agent response shape.
 
 ## Demo scenarios
 
@@ -104,7 +116,9 @@ if (result.output.decision === "buy") {
 - `submissions/skill-manifest.json`: CMC Skill-style manifest for quick review.
 - `examples/cmc-skill-response.json`: sample agent-readable response.
 - `examples/cmc-agent-hub-payload.json`: live-style CMC Agent Hub payload fixture.
+- `examples/cmc-data-quote-payload.json`: CMC `data.quote.USD` payload with supplemental risk context.
 - `docs/integration-guide.md`: CMC, BNB Agent SDK, and Trust Wallet integration notes.
+- `docs/backtest-baseline-report.md`: deterministic comparison against a naive buy-all baseline.
 - `docs/architecture.md`: data flow and custody-boundary diagram.
 - `docs/judge-notes.md`: concise review path for judges.
 - `docs/submission-checklist.md`: final push, deploy, and DoraHacks checklist.

@@ -1,7 +1,7 @@
 import { evaluateStrategy } from "../core/strategy.js";
 import type { AgentReadableOutput, StrategyInput } from "../core/types.js";
 
-type JsonSchema = {
+export type JsonSchema = {
   type: "object";
   required: string[];
   properties: Record<string, unknown>;
@@ -21,6 +21,13 @@ export interface CmcSkillManifest {
     externalApis: string[];
   };
   integrations: string[];
+  capabilities: string[];
+  auditFields: string[];
+  reviewExamples: Array<{
+    name: string;
+    path: string;
+    purpose: string;
+  }>;
 }
 
 export interface CmcSkillResponse {
@@ -35,6 +42,12 @@ export interface CmcSkillResponse {
     sourceAdapters: string[];
     custodyMode: "analysis-only";
     riskGateSummary: string;
+    dataMode: "deterministic-demo" | "live-compatible-payload";
+    adapterReady: boolean;
+    liveReady: boolean;
+    inputSource?: string;
+    inputGeneratedAt?: string;
+    warnings: string[];
   };
 }
 
@@ -82,6 +95,56 @@ export const cmcSkillManifest: CmcSkillManifest = {
     externalApis: ["CoinMarketCap Agent Hub compatible input adapter"],
   },
   integrations: ["CoinMarketCap Agent Hub", "BNB Agent SDK", "Trust Wallet Agent Kit"],
+  capabilities: [
+    "pre-trade-risk-gates",
+    "backtestable-strategy-spec",
+    "cmc-agent-hub-payload-normalization",
+    "bnb-agent-tool-wrapper",
+    "analysis-only-execution-guards",
+  ],
+  auditFields: ["dataMode", "adapterReady", "liveReady", "riskGateSummary", "warnings"],
+  reviewExamples: [
+    {
+      name: "Deterministic demo response",
+      path: "examples/cmc-skill-response.json",
+      purpose: "Shows the exact JSON payload a downstream agent can consume.",
+    },
+    {
+      name: "Live-style CMC Agent Hub payload",
+      path: "examples/cmc-agent-hub-payload.json",
+      purpose: "Shows the enriched CMC-compatible adapter input shape.",
+    },
+    {
+      name: "Baseline comparison report",
+      path: "docs/backtest-baseline-report.md",
+      purpose: "Compares risk-gated decisions against a naive buy-all baseline.",
+    },
+  ],
+};
+
+export const cmcSkillResponseSchema: JsonSchema = {
+  type: "object",
+  required: ["skill", "version", "output", "audit"],
+  properties: {
+    skill: { const: cmcSkillManifest.name },
+    version: { const: cmcSkillManifest.version },
+    output: cmcSkillManifest.outputSchema,
+    audit: {
+      type: "object",
+      required: ["sourceAdapters", "custodyMode", "riskGateSummary", "dataMode", "adapterReady", "liveReady", "warnings"],
+      properties: {
+        sourceAdapters: { type: "array" },
+        custodyMode: { const: "analysis-only" },
+        riskGateSummary: { type: "string" },
+        dataMode: { enum: ["deterministic-demo", "live-compatible-payload"] },
+        adapterReady: { type: "boolean" },
+        liveReady: { type: "boolean" },
+        inputSource: { type: "string" },
+        inputGeneratedAt: { type: "string" },
+        warnings: { type: "array" },
+      },
+    },
+  },
 };
 
 export function runCmcSkill(input: StrategyInput): CmcSkillResponse {
@@ -100,6 +163,10 @@ export function runCmcSkill(input: StrategyInput): CmcSkillResponse {
       sourceAdapters: ["cmc-style-market", "narrative-alpha", "portfolio-risk"],
       custodyMode: "analysis-only",
       riskGateSummary: result.risk.summary,
+      dataMode: "deterministic-demo",
+      adapterReady: true,
+      liveReady: false,
+      warnings: ["Demo scenarios are deterministic fixtures; refresh with a live CMC payload before execution."],
     },
   };
 }
