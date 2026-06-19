@@ -34,9 +34,9 @@ https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/
 
 Upload:
 
-`risk_gated_demo_user_voice.mp4`
+`risk_gated_demo_user_voice_integration.mp4`
 
-Use the MP4 version for DoraHacks. The MOV file is only a backup.
+Use the MP4 version for DoraHacks. This is the latest version with the Integration Proof section. The MOV file is only a backup.
 
 ## Tags
 

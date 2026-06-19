@@ -4,7 +4,7 @@
 
 - Repository: https://github.com/xuanpengcao10-rgb/bnb-track2-risk-skill
 - Demo page: https://xuanpengcao10-rgb.github.io/bnb-track2-risk-skill/
-- Demo video: upload `risk_gated_demo_user_voice.mp4` with the DoraHacks submission.
+- Demo video: upload `risk_gated_demo_user_voice_integration.mp4` with the DoraHacks submission.
 
 ## Fast review path
 
